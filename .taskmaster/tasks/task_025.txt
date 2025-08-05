@@ -1,0 +1,209 @@
+# Task ID: 25
+# Title: Implementar Operações UPDATE
+# Status: done
+# Dependencies: 22
+# Priority: medium
+# Description: Desenvolver funções para atualizar registros existentes com validação e tratamento de concorrência.
+# Details:
+1. Criar uma classe UpdateOperations para operações de atualização de dados:
+```javascript
+import { supabase } from './supabaseClient'
+
+/**
+ * Classe para gerenciar operações de atualização no banco de dados
+ */
+export class UpdateOperations {
+  /**
+   * Atualiza um registro existente por ID
+   * @param {string} tabela - Nome da tabela
+   * @param {string} id - ID do registro a ser atualizado
+   * @param {Object} updates - Campos a serem atualizados
+   * @param {Object} options - Opções adicionais
+   * @returns {Promise<Object>} Objeto contendo dados atualizados ou erro
+   */
+  static async updateById(tabela, id, updates, options = {}) {
+    // Validação básica
+    if (!id) {
+      return { error: { message: 'ID do registro é obrigatório' } }
+    }
+    
+    if (Object.keys(updates).length === 0) {
+      return { error: { message: 'Nenhum campo para atualizar' } }
+    }
+
+    try {
+      // Verificar se o registro existe antes de atualizar
+      const { data: existingRecord, error: fetchError } = await supabase
+        .from(tabela)
+        .select('id, atualizado_em')
+        .eq('id', id)
+        .single()
+
+      if (fetchError || !existingRecord) {
+        return { error: { message: `Registro não encontrado na tabela ${tabela}` } }
+      }
+
+      // Controle de concorrência com timestamp
+      if (options.version && existingRecord.atualizado_em !== options.version) {
+        return { error: { message: 'Conflito de versão: o registro foi modificado por outro usuário' } }
+      }
+
+      // Realizar a atualização
+      const { data, error } = await supabase
+        .from(tabela)
+        .update({
+          ...updates,
+          atualizado_em: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select()
+
+      if (error) throw error
+
+      return { data: data[0], error: null }
+    } catch (error) {
+      console.error(`Erro ao atualizar registro com ID ${id} na tabela ${tabela}:`, error)
+      return { 
+        data: null, 
+        error: { 
+          message: error.code === '23505' ? 'Violação de restrição única' : `Erro ao atualizar registro: ${error.message}` 
+        } 
+      }
+    }
+  }
+
+  /**
+   * Atualiza múltiplos registros com base em filtros
+   * @param {string} tabela - Nome da tabela
+   * @param {Object} filtros - Filtros para selecionar registros
+   * @param {Object} updates - Campos a serem atualizados
+   * @returns {Promise<Object>} Objeto contendo quantidade de registros atualizados ou erro
+   */
+  static async updateWithFilters(tabela, filtros, updates) {
+    if (Object.keys(updates).length === 0) {
+      return { error: { message: 'Nenhum campo para atualizar' } }
+    }
+
+    try {
+      let query = supabase.from(tabela).update(updates)
+      
+      // Aplicar filtros
+      Object.entries(filtros).forEach(([campo, valor]) => {
+        query = query.eq(campo, valor)
+      })
+
+      const { data, error, count } = await query.select()
+
+      if (error) throw error
+
+      return { data, count, error: null }
+    } catch (error) {
+      console.error(`Erro ao atualizar registros na tabela ${tabela}:`, error)
+      return { data: null, count: 0, error: { message: `Erro ao atualizar registros: ${error.message}` } }
+    }
+  }
+
+  /**
+   * Atualiza um campo específico de um registro
+   * @param {string} tabela - Nome da tabela
+   * @param {string} id - ID do registro
+   * @param {string} campo - Nome do campo a ser atualizado
+   * @param {any} valor - Novo valor do campo
+   * @returns {Promise<Object>} Objeto contendo dados atualizados ou erro
+   */
+  static async updateField(tabela, id, campo, valor) {
+    return this.updateById(tabela, id, { [campo]: valor })
+  }
+}
+```
+
+2. Implementação de controle de concorrência (optimistic locking) usando timestamps
+3. Sistema de rollback automático em caso de erro durante a atualização
+4. Logs de auditoria para rastrear todas as mudanças realizadas
+5. Validação específica para diferentes tipos de campos e tabelas
+6. Suporte para atualizações parciais e múltiplas com filtros
+
+# Test Strategy:
+1. Testar a atualização de diferentes campos individualmente
+2. Verificar se o campo atualizado_em é atualizado automaticamente
+3. Testar cenários de erro (ID inexistente, violação de restrição única)
+4. Verificar se as políticas de RLS estão sendo respeitadas nas atualizações
+5. Testar atualizações concorrentes para garantir consistência dos dados
+6. Testar o sistema de rollback automático em caso de erro
+7. Verificar a atualização múltipla com diferentes filtros
+8. Testar a atualização de campo específico
+9. Validar o controle de concorrência com timestamps
+
+# Subtasks:
+## 1.  [done]
+### Dependencies: None
+### Description: Implementar classe UpdateOperations com método updateById
+### Details:
+
+
+## 2.  [done]
+### Dependencies: None
+### Description: Implementar método updateWithFilters para atualizações com filtros
+### Details:
+
+
+## 3.  [done]
+### Dependencies: None
+### Description: Implementar método updateField para atualização de campo específico
+### Details:
+
+
+## 4.  [done]
+### Dependencies: None
+### Description: Implementar controle de concorrência usando timestamps
+### Details:
+
+
+## 5.  [done]
+### Dependencies: None
+### Description: Implementar sistema de rollback automático em caso de erro
+### Details:
+
+
+## 6.  [done]
+### Dependencies: None
+### Description: Implementar validação de dados antes da atualização
+### Details:
+
+
+## 7.  [done]
+### Dependencies: None
+### Description: Implementar logs de auditoria automáticos
+### Details:
+
+
+## 8.  [done]
+### Dependencies: None
+### Description: Testar atualização de categorias com filtros
+### Details:
+
+
+## 9.  [done]
+### Dependencies: None
+### Description: Testar atualização de campo específico (icone)
+### Details:
+
+
+## 10.  [done]
+### Dependencies: None
+### Description: Testar controle de concorrência com versões
+### Details:
+
+
+## 11.  [done]
+### Dependencies: None
+### Description: Testar rollback automático
+### Details:
+
+
+## 12.  [done]
+### Dependencies: None
+### Description: Implementar tratamento de erros robusto
+### Details:
+
+

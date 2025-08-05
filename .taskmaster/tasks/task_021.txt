@@ -1,0 +1,130 @@
+# Task ID: 21
+# Title: Configurar Conexão com Supabase
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Estabelecer conexão com o projeto Supabase existente, validar credenciais e testar a conectividade.
+# Details:
+1. Instalar a biblioteca Supabase JS Client (versão 2.38.4 ou superior) via npm/yarn: `npm install @supabase/supabase-js`
+2. Criar arquivo de configuração `.env` para armazenar as credenciais do Supabase (URL e API Key)
+3. Implementar um módulo de conexão:
+```javascript
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Credenciais do Supabase não configuradas')
+}
+
+export const supabase = createClient(supabaseUrl, supabaseKey)
+
+// Função para testar a conexão
+export async function testConnection() {
+  try {
+    const { data, error } = await supabase.from('pg_tables').select('*').limit(1)
+    if (error) throw error
+    return { success: true, message: 'Conexão estabelecida com sucesso' }
+  } catch (error) {
+    return { success: false, message: `Erro de conexão: ${error.message}` }
+  }
+}
+```
+4. Implementar validação de permissões para garantir que o usuário tem acesso às operações necessárias
+5. Adicionar tratamento de erros e retry logic para falhas de conexão temporárias
+
+# Test Strategy:
+1. Criar testes unitários usando Jest ou Mocha para verificar se o cliente Supabase é inicializado corretamente
+2. Implementar teste de integração que verifica a conexão real com o Supabase
+3. Testar cenários de falha (credenciais inválidas, servidor indisponível)
+4. Verificar se as variáveis de ambiente são carregadas corretamente
+5. Validar que o token de API tem as permissões necessárias executando uma query simples
+
+# Subtasks:
+## 1. Install Supabase JS Client Library [done]
+### Dependencies: None
+### Description: Install the Supabase JS Client (version 2.38.4 or higher) in the project using npm or yarn.
+### Details:
+Run the command `npm install @supabase/supabase-js` or `yarn add @supabase/supabase-js` in the project root to add the required library.
+
+## 2. Configure Environment Variables for Supabase Credentials [done]
+### Dependencies: 21.1
+### Description: Create and configure a `.env` file to securely store Supabase URL and API Key.
+### Details:
+Add SUPABASE_URL and SUPABASE_KEY variables to the `.env` file and ensure they are loaded into the application environment.
+
+## 3. Implement Supabase Connection Module [done]
+### Dependencies: 21.2
+### Description: Develop a module that initializes the Supabase client using credentials from environment variables and exposes the client for use.
+### Details:
+Create a file (e.g., `supabaseClient.js`) that imports `createClient` from '@supabase/supabase-js', reads credentials from environment variables, validates their presence, and exports the initialized client.
+
+## 4. Validate Credentials and Test Connectivity [done]
+### Dependencies: 21.3
+### Description: Implement a function to test the Supabase connection by performing a simple query and handling errors.
+### Details:
+Add an async function (e.g., `testConnection`) that queries a system or test table, checks for errors, and returns a success or failure response.
+<info added on 2025-07-29T16:39:14.342Z>
+## Connection Test Results
+
+✅ Teste de conexão executado com sucesso!
+
+**Resultados:**
+- ✅ Conexão estabelecida com sucesso
+- ✅ SELECT: Permitido
+- ❌ INSERT: Negado (Row Level Security Policy)
+- ✅ UPDATE: Permitido  
+- ✅ DELETE: Permitido
+
+**Observações:**
+- A tabela client_base existe mas está vazia
+- INSERT está bloqueado por RLS (Row Level Security)
+- Todas as outras operações estão funcionando
+- Credenciais configuradas corretamente
+
+**Próximos passos:**
+- Configurar RLS para permitir INSERT
+- Ou criar tabela nova sem RLS
+- Implementar operações CRUD
+</info added on 2025-07-29T16:39:14.342Z>
+
+## 5. Add Permission Validation and Robust Error Handling [done]
+### Dependencies: 21.4
+### Description: Enhance the connection logic to validate user permissions for required operations and implement retry logic for transient connection errors.
+### Details:
+Check that the authenticated user has necessary permissions for CRUD operations and add retry mechanisms for temporary failures.
+<info added on 2025-07-29T16:41:37.608Z>
+✅ Módulo CRUD implementado com sucesso!
+
+**Implementações realizadas:**
+- ✅ Classe SupabaseCRUD com todas as operações CRUD
+- ✅ Tratamento robusto de erros com mensagens específicas
+- ✅ Validação de permissões para cada operação
+- ✅ Função withRetry com backoff exponencial
+- ✅ Scripts de teste para validação
+- ✅ Suporte a filtros, paginação e busca
+
+**Funcionalidades implementadas:**
+- CREATE: Inserir novos registros com validação
+- READ: Buscar registros com filtros e paginação
+- READ BY ID: Buscar registro específico
+- UPDATE: Atualizar registros existentes
+- DELETE: Deletar registros (hard/soft delete)
+- COUNT: Contar registros
+- SEARCH: Busca textual em múltiplos campos
+- VALIDATE PERMISSIONS: Testar permissões de cada operação
+
+**Tratamento de erros específicos:**
+- Row Level Security (RLS)
+- Chaves duplicadas
+- Violação de chave estrangeira
+- Campos obrigatórios
+- Erros de rede com retry
+
+**Próximos passos:**
+- Configurar RLS para permitir INSERT
+- Criar tabelas de teste
+- Implementar logs de auditoria
+</info added on 2025-07-29T16:41:37.608Z>
+
