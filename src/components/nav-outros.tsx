@@ -1,18 +1,12 @@
 "use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { type LucideIcon } from "lucide-react"
 import { usePathname } from "next/navigation"
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -20,7 +14,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useCollapsible } from "@/contexts/CollapsibleContext"
+import { useTabSync } from "@/contexts/TabSyncContext"
 
 export function NavOutros({
   outros,
@@ -40,70 +34,54 @@ export function NavOutros({
 }) {
   const { isMobile } = useSidebar()
   const pathname = usePathname()
-  const { isItemOpen, toggleItem } = useCollapsible()
+  const { activeTab } = useTabSync()
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Outros</SidebarGroupLabel>
       <SidebarMenu>
         {outros.map((item) => (
-          <Collapsible 
-            key={item.name} 
-            asChild 
-            open={isItemOpen(item.name)}
-            onOpenChange={(open) => toggleItem(item.name)}
-          >
-            <SidebarMenuItem>
-              {item.items?.length ? (
-                <SidebarMenuButton 
-                  tooltip={item.name}
-                  onClick={() => toggleItem(item.name)}
-                >
+          <SidebarMenuItem key={item.name}>
+            {item.items?.length ? (
+              <SidebarMenuButton 
+                tooltip={item.name}
+                isActive={activeTab === item.name.toLowerCase() || item.items?.some(sub => pathname === sub.url)}
+              >
+                <item.icon />
+                <span>{item.name}</span>
+              </SidebarMenuButton>
+            ) : (
+              <SidebarMenuButton asChild tooltip={item.name} isActive={pathname === item.url || activeTab === item.name.toLowerCase()}>
+                <a href={item.url}>
                   <item.icon />
                   <span>{item.name}</span>
-                </SidebarMenuButton>
-              ) : (
-                <SidebarMenuButton asChild tooltip={item.name}>
-                  <a href={item.url}>
-                    <item.icon />
-                    <span>{item.name}</span>
-                  </a>
-                </SidebarMenuButton>
-              )}
-              {item.items?.length ? (
-                <>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuAction className="data-[state=open]:rotate-90 transition-transform duration-200">
-                      <ChevronRight />
-                      <span className="sr-only">Toggle</span>
-                    </SidebarMenuAction>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub className="animate-in fade-in-0 duration-200">
-                      {item.items?.map((subItem) => (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton 
-                            asChild={!subItem.onClick}
-                            onClick={subItem.onClick}
-                          >
-                            {subItem.onClick ? (
-                              <button className="w-full text-left">
-                                <span>{subItem.title}</span>
-                              </button>
-                            ) : (
-                              <a href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </a>
-                            )}
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </>
-              ) : null}
-            </SidebarMenuItem>
-          </Collapsible>
+                </a>
+              </SidebarMenuButton>
+            )}
+            {item.items?.length ? (
+              <SidebarMenuSub className="animate-in fade-in-0 duration-200">
+                {item.items?.map((subItem) => (
+                  <SidebarMenuSubItem key={subItem.title}>
+                    <SidebarMenuSubButton 
+                      asChild={!subItem.onClick}
+                      onClick={subItem.onClick}
+                      isActive={pathname === subItem.url}
+                    >
+                      {subItem.onClick ? (
+                        <button className="w-full text-left">
+                          <span>{subItem.title}</span>
+                        </button>
+                      ) : (
+                        <a href={subItem.url}>
+                          <span>{subItem.title}</span>
+                        </a>
+                      )}
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            ) : null}
+          </SidebarMenuItem>
         ))}
       </SidebarMenu>
     </SidebarGroup>

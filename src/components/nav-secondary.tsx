@@ -1,5 +1,6 @@
 import * as React from "react"
 import { type LucideIcon } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 import {
   SidebarGroup,
@@ -8,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useTabSync } from "@/contexts/TabSyncContext"
 
 export function NavSecondary({
   items,
@@ -19,13 +21,16 @@ export function NavSecondary({
     icon: LucideIcon
   }[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const pathname = usePathname()
+  const { activeTab } = useTabSync()
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild size="sm">
+              <SidebarMenuButton asChild size="sm" isActive={pathname === item.url || activeTab === item.title.toLowerCase()}>
                 <a href={item.url}>
                   <item.icon />
                   <span>{item.title}</span>

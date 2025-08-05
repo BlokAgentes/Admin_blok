@@ -1,0 +1,50 @@
+# Command Component Integration PRD
+
+## Overview
+Integrate a React Command component (cmdk-based) into the Client Flows Platform sidebar navigation, positioned above the "Suporte" (Support) section.
+
+## Requirements
+
+### 1. Component Setup
+- Install required dependencies: cmdk, @radix-ui/react-icons, @radix-ui/react-dialog
+- Create Command component in /components/ui/command.tsx with full cmdk functionality
+- Create demo component showcasing the Command dialog with keyboard shortcuts
+
+### 2. Sidebar Integration
+- Add Command demo component to sidebar navigation
+- Position component above "Suporte" section
+- Ensure proper styling with existing shadcn/ui theme
+- Maintain responsive behavior for mobile/desktop
+
+### 3. Dependencies & Assets
+- Install missing npm packages: cmdk, @radix-ui/react-icons, @radix-ui/react-dialog
+- Ensure Dialog component exists or create if missing
+- Use lucide-react icons as specified in demo
+
+### 4. Styling & Theme
+- Follow existing new-york shadcn/ui styling
+- Use Tailwind CSS with CSS variables
+- Ensure dark/light mode compatibility
+- Maintain consistent spacing and typography
+
+### 5. Functionality
+- Keyboard shortcut: ⌘K (Ctrl+K on Windows)
+- Search functionality with placeholder text
+- Quick actions: New folder, Import document, Add block
+- Navigation shortcuts: Dashboard, Apps, Connections
+- Proper focus management and accessibility
+
+## Acceptance Criteria
+- [ ] Command dialog opens with ⌘K/Ctrl+K shortcut
+- [ ] All quick start commands work correctly
+- [ ] Navigation commands redirect properly
+- [ ] Component matches existing theme styling
+- [ ] Responsive design works on mobile devices
+- [ ] No console warnings or errors
+- [ ] Proper TypeScript types throughout
+
+## Technical Notes
+- Use existing project structure and patterns
+- Follow TypeScript strict mode
+- Ensure compatibility with Next.js 15.4.3 App Router
+- Maintain JWT authentication context if needed

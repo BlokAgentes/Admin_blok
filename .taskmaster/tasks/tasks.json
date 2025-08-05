@@ -823,11 +823,77 @@
             "parentTaskId": 31
           }
         ]
+      },
+      {
+        "id": 32,
+        "title": "Install Command Component Dependencies",
+        "description": "Install required npm packages for the Command component: cmdk, @radix-ui/react-icons, @radix-ui/react-dialog",
+        "details": "Run npm install cmdk @radix-ui/react-icons @radix-ui/react-dialog to install the necessary packages for the Command component integration.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 33,
+        "title": "Create Command Component",
+        "description": "Create the Command component in /components/ui/command.tsx with full cmdk functionality including Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator, and CommandShortcut components",
+        "details": "Copy the provided Command component code to /components/ui/command.tsx, ensuring all TypeScript types are properly defined and the component follows shadcn/ui new-york styling conventions.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 34,
+        "title": "Create Dialog Component",
+        "description": "Create the Dialog component in /components/ui/dialog.tsx if it doesn't exist, including Dialog, DialogTrigger, DialogPortal, DialogClose, DialogOverlay, DialogContent, DialogHeader, DialogFooter, DialogTitle, and DialogDescription components",
+        "details": "Ensure the Dialog component follows shadcn/ui new-york styling and includes proper TypeScript types. This is required for the CommandDialog component to work properly.",
+        "testStrategy": "",
+        "status": "in-progress",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 35,
+        "title": "Create Command Demo Component",
+        "description": "Create the Command demo component in /components/ui/command-demo.tsx with keyboard shortcut functionality, including search, quick actions, and navigation commands",
+        "details": "Implement the demo component with ⌘K/Ctrl+K keyboard shortcut, search functionality, quick actions (New folder, Import document, Add block), and navigation shortcuts (Dashboard, Apps, Connections).",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 37,
+        "title": "Test Command Component Functionality",
+        "description": "Test the Command component functionality including keyboard shortcuts, search, quick actions, and navigation commands",
+        "details": "Verify that the Command dialog opens with ⌘K/Ctrl+K, all quick start commands work correctly, navigation commands redirect properly, and there are no console warnings or errors.",
+        "testStrategy": "",
+        "status": "in-progress",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 38,
+        "title": "Integrate Command Demo in Top-Right Corner",
+        "description": "Integrate the Command demo component in the top-right corner of the application (header area) with a fixed positioned button and global ⌘K keyboard shortcut",
+        "details": "Position the Command demo component in the top-right corner of the application header with a fixed/sticky button. Ensure it works globally across the entire application and maintains the ⌘K keyboard shortcut functionality.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-07-24T19:41:12.971Z",
-      "updated": "2025-08-01T17:43:19.608Z",
+      "updated": "2025-08-05T23:11:07.976Z",
       "description": "Tasks for master context"
     }
   }

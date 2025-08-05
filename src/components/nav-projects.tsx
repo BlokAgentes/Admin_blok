@@ -1,8 +1,7 @@
 "use client"
 
-import {
-  type LucideIcon,
-} from "lucide-react"
+import { type LucideIcon } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 import {
   SidebarGroup,
@@ -13,6 +12,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useTabSync } from "@/contexts/TabSyncContext"
 
 export function NavProjects({
   projects,
@@ -24,6 +24,8 @@ export function NavProjects({
   }[]
 }) {
   const { isMobile } = useSidebar()
+  const pathname = usePathname()
+  const { activeTab } = useTabSync()
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -31,7 +33,7 @@ export function NavProjects({
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild isActive={pathname === item.url || activeTab === item.name.toLowerCase()}>
               <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>

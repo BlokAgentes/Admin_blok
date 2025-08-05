@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` - Build for production
 - `npm run lint` - Run ESLint
 - `npm run start` - Start production server
-- TypeScript check happens during build (no separate type-check script)
+- `npx tsc --noEmit` - Run TypeScript type checking
 
 **Database**
 - `npx prisma migrate dev` - Run migrations
@@ -44,6 +44,12 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - `npx prisma db pull` - Pull database schema changes
 - `npx prisma db seed` - Seed database with initial data
 - `npx prisma migrate status` - Check migration status
+- `npx prisma migrate reset --force` - Reset database and re-seed (dev only)
+
+**Command/Search Component Commands**
+- `npx shadcn@latest add command` - Add cmdk-based command component
+- `npx shadcn@latest add dialog` - Add dialog component for command palette
+- Keyboard shortcut: ⌘K (Ctrl+K) for global command palette
 
 ## Architecture
 
@@ -108,6 +114,9 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - `src/components/tabelas/` - Data table components
 - `src/components/conversas/` - Chat/conversation components
 - `src/components/magicui/` - Enhanced UI components (shimmer effects, etc.)
+- `src/components/command-k.tsx` - Global command palette component (⌘K)
+- `src/components/global-command-k.tsx` - Global command handler
+- `src/contexts/TabSyncContext.tsx` - Tab synchronization state management
 
 **API Routes**
 - `/api/auth/*` - Authentication endpoints (login, register)

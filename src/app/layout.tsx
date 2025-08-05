@@ -4,6 +4,8 @@ import "./globals.css";
 import { SidebarStateProvider } from "@/contexts/SidebarContext";
 import { BlurProvider } from "@/contexts/BlurContext";
 import { CollapsibleProvider } from "@/contexts/CollapsibleContext";
+import { TabSyncProvider } from "@/contexts/TabSyncContext";
+import { GlobalCommandK } from "@/components/global-command-k";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,11 +36,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SidebarStateProvider>
-          <CollapsibleProvider>
-            <BlurProvider>
-              {children}
-            </BlurProvider>
-          </CollapsibleProvider>
+          <TabSyncProvider>
+            <CollapsibleProvider>
+              <BlurProvider>
+                {children}
+                <GlobalCommandK />
+              </BlurProvider>
+            </CollapsibleProvider>
+          </TabSyncProvider>
         </SidebarStateProvider>
       </body>
     </html>
