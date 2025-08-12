@@ -47,7 +47,7 @@ const ShaderMaterial = ({
   const frameCount = useRef(0);
 
   const getUniforms = () => {
-    const uniformValues: { [key: string]: any } = {};
+    const uniformValues: { [key: string]: number | number[] } = {};
     Object.keys(uniforms).forEach((key) => {
       const uniform = uniforms[key];
       if (uniform.type === "uniform1f") {

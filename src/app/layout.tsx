@@ -31,15 +31,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
         <SidebarStateProvider>
           <TabSyncProvider>
             <CollapsibleProvider>
               <BlurProvider>
-                {children}
+                <div className="min-h-screen">
+                  {children}
+                </div>
                 <GlobalCommandK />
               </BlurProvider>
             </CollapsibleProvider>

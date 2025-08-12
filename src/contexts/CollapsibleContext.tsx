@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 
 type CollapsibleState = {
@@ -13,6 +13,7 @@ type CollapsibleContextType = {
   setItemOpen: (key: string, open: boolean) => void
   isItemOpen: (key: string) => boolean
   resetToAutoMode: () => void
+  isManualMode: boolean // Expor o modo para componentes filhos
 }
 
 const CollapsibleContext = createContext<CollapsibleContextType | null>(null)
@@ -25,11 +26,31 @@ export function useCollapsible() {
   return context
 }
 
-export function CollapsibleProvider({ children }: { children: ReactNode }) {
-  const [openItems, setOpenItems] = useState<CollapsibleState>({})
+// Configuração externa para facilitar manutenção
+const ROUTE_CONFIG = {
+  'Admin': ['/admin', '/admin/geral', '/admin/configuracoes', '/conta'],
+  'Configuração': ['/config', '/config/geral', '/config/perfil', '/config/cobranca', '/config/notificacoes'],
+  'API - Em Breve': ['/api/crm', '/api/modelos']
+} as const
+
+type CollapsibleProviderProps = {
+  children: ReactNode
+  routeConfig?: typeof ROUTE_CONFIG // Permite configuração customizada
+  defaultOpenItems?: CollapsibleState // Estado inicial customizável
+}
+
+export function CollapsibleProvider({ 
+  children, 
+  routeConfig = ROUTE_CONFIG,
+  defaultOpenItems = {}
+}: CollapsibleProviderProps) {
+  const [openItems, setOpenItems] = useState<CollapsibleState>(defaultOpenItems)
   const [manualMode, setManualMode] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
+
+  // Lista de itens colapsáveis derivada da configuração
+  const collapsibleItems = useMemo(() => Object.keys(routeConfig), [routeConfig])
 
   // Marca que estamos no cliente
   useEffect(() => {
@@ -40,65 +61,80 @@ export function CollapsibleProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isClient) return
     
-    const savedState = localStorage.getItem('sidebar_collapsible_state')
-    if (savedState) {
-      try {
-        setOpenItems(JSON.parse(savedState))
-      } catch (error) {
-        console.error('Error parsing saved collapsible state:', error)
+    try {
+      const savedState = localStorage.getItem('sidebar_collapsible_state')
+      if (savedState) {
+        const parsed = JSON.parse(savedState)
+        setOpenItems(parsed)
       }
+    } catch (error) {
+      console.warn('Failed to load collapsible state:', error)
+      // Mantém o estado padrão se falhar
     }
     
-    const savedManualMode = localStorage.getItem('sidebar_manual_mode')
-    if (savedManualMode) {
-      setManualMode(savedManualMode === 'true')
+    try {
+      const savedManualMode = localStorage.getItem('sidebar_manual_mode')
+      if (savedManualMode !== null) {
+        setManualMode(savedManualMode === 'true')
+      }
+    } catch (error) {
+      console.warn('Failed to load manual mode state:', error)
     }
   }, [isClient])
 
-  // Salva o estado no localStorage sempre que mudar (apenas no cliente)
+  // Salva o estado no localStorage sempre que mudar (com debounce)
   useEffect(() => {
     if (!isClient) return
     
-    localStorage.setItem('sidebar_collapsible_state', JSON.stringify(openItems))
-    localStorage.setItem('sidebar_manual_mode', manualMode.toString())
+    // Debounce para evitar muitas escritas
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem('sidebar_collapsible_state', JSON.stringify(openItems))
+        localStorage.setItem('sidebar_manual_mode', manualMode.toString())
+      } catch (error) {
+        console.warn('Failed to save collapsible state:', error)
+      }
+    }, 100)
+
+    return () => clearTimeout(timeoutId)
   }, [openItems, manualMode, isClient])
 
-  // Sincroniza o estado com a rota atual - apenas no cliente
+  // Sincroniza o estado com a rota atual - apenas no cliente e modo automático
   useEffect(() => {
     if (!isClient || manualMode) return
 
     setOpenItems(prevState => {
       const newState = { ...prevState }
-      
-      // Lista de itens que podem ser collapsibles
-      const collapsibleItems = ['Admin', 'Configuração', 'API - Em Breve']
-      
-      // Cria um mapa de rotas para cada item
-      const routeMap: { [key: string]: string[] } = {
-        'Admin': ['/admin', '/admin/geral', '/admin/configuracoes', '/conta'],
-        'Configuração': ['/config', '/config/geral', '/config/perfil', '/config/cobranca', '/config/notificacoes'],
-        'API - Em Breve': ['/api/crm', '/api/modelos']
-      }
+      let hasChanges = false
       
       // Para cada item, verifica se deve estar aberto baseado na rota atual
       collapsibleItems.forEach(item => {
-        const routes = routeMap[item]
+        const routes = routeConfig[item as keyof typeof routeConfig]
+        if (!routes) return
+        
         const isCurrentRoute = routes.some(route => 
           pathname === route || pathname.startsWith(route + '/')
         )
         
-        // Sincroniza com a rota atual - mantém aberto se estiver na rota correta
-        if (isCurrentRoute) {
+        // Só atualiza se a rota atual corresponde e o estado está diferente
+        if (isCurrentRoute && !prevState[item]) {
           newState[item] = true
+          hasChanges = true
         }
-        // Se não estiver na rota, mantém o estado atual (não força fechar)
+        // Opção: fechar outros itens quando navegar (descomente se desejar)
+        // else if (!isCurrentRoute && prevState[item]) {
+        //   newState[item] = false
+        //   hasChanges = true
+        // }
       })
       
-      return newState
+      // Só retorna novo estado se houve mudanças (evita re-renders)
+      return hasChanges ? newState : prevState
     })
-  }, [pathname, manualMode, isClient])
+  }, [pathname, manualMode, isClient, collapsibleItems, routeConfig])
 
-  const toggleItem = (key: string) => {
+  // Funções memoizadas para melhor performance
+  const toggleItem = useCallback((key: string) => {
     // Ativa modo manual apenas no cliente
     if (isClient) {
       setManualMode(true)
@@ -107,35 +143,65 @@ export function CollapsibleProvider({ children }: { children: ReactNode }) {
       ...prev,
       [key]: !prev[key]
     }))
-  }
+  }, [isClient])
 
-  const setItemOpen = (key: string, open: boolean) => {
+  const setItemOpen = useCallback((key: string, open: boolean) => {
     // Ativa modo manual apenas no cliente
     if (isClient) {
       setManualMode(true)
     }
-    setOpenItems(prev => ({
-      ...prev,
-      [key]: open
-    }))
-  }
+    setOpenItems(prev => {
+      // Evita atualização se o valor já é o mesmo
+      if (prev[key] === open) return prev
+      return {
+        ...prev,
+        [key]: open
+      }
+    })
+  }, [isClient])
 
-  const isItemOpen = (key: string): boolean => {
+  const isItemOpen = useCallback((key: string): boolean => {
     // Para SSR, retorna sempre falso para evitar hydration mismatch
     if (!isClient) {
       return false
     }
     return openItems[key] || false
-  }
+  }, [isClient, openItems])
 
-  const resetToAutoMode = () => {
-    if (isClient) {
-      setManualMode(false)
-    }
-  }
+  const resetToAutoMode = useCallback(() => {
+    if (!isClient) return
+    
+    setManualMode(false)
+    
+    // Opcionalmente, re-sincroniza com a rota atual ao resetar
+    const newState: CollapsibleState = {}
+    collapsibleItems.forEach(item => {
+      const routes = routeConfig[item as keyof typeof routeConfig]
+      if (!routes) return
+      
+      const isCurrentRoute = routes.some(route => 
+        pathname === route || pathname.startsWith(route + '/')
+      )
+      
+      if (isCurrentRoute) {
+        newState[item] = true
+      }
+    })
+    setOpenItems(newState)
+  }, [isClient, pathname, collapsibleItems, routeConfig])
+
+  // Valor memoizado do contexto
+  const contextValue = useMemo(() => ({
+    openItems,
+    toggleItem,
+    setItemOpen,
+    isItemOpen,
+    resetToAutoMode,
+    isManualMode: manualMode
+  }), [openItems, toggleItem, setItemOpen, isItemOpen, resetToAutoMode, manualMode])
 
   return (
-    <CollapsibleContext.Provider value={{ openItems, toggleItem, setItemOpen, isItemOpen, resetToAutoMode }}>
+    <CollapsibleContext.Provider value={contextValue}>
       {children}
     </CollapsibleContext.Provider>
   )

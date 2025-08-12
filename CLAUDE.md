@@ -113,6 +113,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - `src/components/charts/` - Data visualization components
 - `src/components/tabelas/` - Data table components
 - `src/components/conversas/` - Chat/conversation components
+- `src/components/cobranca/` - Billing/cobranca components
 - `src/components/magicui/` - Enhanced UI components (shimmer effects, etc.)
 - `src/components/command-k.tsx` - Global command palette component (⌘K)
 - `src/components/global-command-k.tsx` - Global command handler
@@ -260,6 +261,7 @@ src/
 - Form components use React Hook Form + Zod validation patterns
 - Charts use Recharts with consistent color schemes from Tailwind
 - Follow new-york style configuration from `components.json`
+- Revenue/statistics widgets follow the pattern in `src/components/tabelas/stat-card.tsx`
 
 **Performance Optimizations**
 - Turbopack enabled for development (`next dev --turbopack`)
@@ -308,16 +310,42 @@ This project includes comprehensive Task Master AI integration via `.rules` file
 - Tag-based workflow organization
 
 **Configuration Files**
-- `.mcp.json` - MCP server configuration for Claude Code
+- `.cursor/mcp.json` - MCP server configuration for Claude Code with task-master-ai, fetch, and browser servers
 - `.taskmaster/` - Task Master project files and configuration
 - `.rules` - Comprehensive guide for Task Master CLI and MCP usage
-- `.cursor/` - Cursor-specific configuration
-- `.clinerules/` - Additional AI assistant rules
-- `.windsurf/` - Windsurf IDE configuration
-- `.zed/` - Zed editor configuration
+- `stagewise.json` - Project configuration file (port 3100, appPort 3000)
+- `components.json` - shadcn/ui configuration (new-york style, neutral base color)
+- `next.config.ts` - Next.js configuration (basic setup)
 
 **Workflow Integration**
 - Use Task Master for project planning and task breakdown
 - Track implementation progress with subtask updates
 - Leverage research mode for complex technical decisions
 - Maintain development context across multiple Claude sessions
+
+## Important Instruction Reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+
+## Critical Security Guidelines
+- NEVER commit sensitive data (API keys, passwords, tokens) to the repository
+- Always use environment variables for sensitive configuration
+- Validate all user inputs in both client and server components
+- Use proper authentication middleware for protected API routes
+- Follow the existing JWT authentication pattern in `src/lib/auth.ts`
+
+## Error Handling Patterns
+- API routes should return consistent error responses with appropriate HTTP status codes
+- Use try-catch blocks for database operations
+- Client components should handle loading and error states
+- Follow the existing patterns in `/api/auth/*` routes for consistent error handling
+
+## Database Migration Workflow
+When making schema changes:
+1. Edit `prisma/schema.prisma`
+2. Run `npx prisma migrate dev --name descriptive-name`
+3. Test migration with `node test-migration-success.js`
+4. Update any affected API routes and components
+5. Run `npx prisma generate` to update Prisma client

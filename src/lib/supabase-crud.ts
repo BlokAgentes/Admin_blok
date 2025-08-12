@@ -1,7 +1,7 @@
 import { supabase, withRetry } from './supabase'
 
 // Tipos para as operações CRUD
-export interface CRUDResult<T = any> {
+export interface CRUDResult<T = unknown> {
   success: boolean
   data?: T
   error?: string
@@ -18,7 +18,7 @@ export interface ReadOptions {
   offset?: number
   orderBy?: string
   ascending?: boolean
-  filters?: Record<string, any>
+  filters?: Record<string, unknown>
 }
 
 export interface UpdateOptions {
@@ -41,7 +41,7 @@ export class SupabaseCRUD {
   }
 
   // CREATE - Criar novo registro
-  async create<T = any>(
+  async create<T = unknown>(
     data: Partial<T>,
     options: CreateOptions = {}
   ): Promise<CRUDResult<T>> {
@@ -84,7 +84,7 @@ export class SupabaseCRUD {
   }
 
   // READ - Buscar registros
-  async read<T = any>(
+  async read<T = unknown>(
     options: ReadOptions = {}
   ): Promise<CRUDResult<T[]>> {
     try {
@@ -127,7 +127,7 @@ export class SupabaseCRUD {
   }
 
   // READ BY ID - Buscar registro por ID
-  async readById<T = any>(id: string | number): Promise<CRUDResult<T>> {
+  async readById<T = unknown>(id: string | number): Promise<CRUDResult<T>> {
     try {
       const { data, error } = await supabase
         .from(this.tableName)
@@ -151,7 +151,7 @@ export class SupabaseCRUD {
   }
 
   // UPDATE - Atualizar registro
-  async update<T = any>(
+  async update<T = unknown>(
     id: string | number,
     data: Partial<T>,
     options: UpdateOptions = {}
@@ -234,7 +234,7 @@ export class SupabaseCRUD {
   }
 
   // COUNT - Contar registros
-  async count(filters: Record<string, any> = {}): Promise<CRUDResult<number>> {
+  async count(filters: Record<string, unknown> = {}): Promise<CRUDResult<number>> {
     try {
       let query = supabase
         .from(this.tableName)
@@ -265,7 +265,7 @@ export class SupabaseCRUD {
   }
 
   // SEARCH - Busca com texto
-  async search<T = any>(
+  async search<T = unknown>(
     searchTerm: string,
     searchFields: string[],
     options: ReadOptions = {}
@@ -345,7 +345,7 @@ export class SupabaseCRUD {
   }
 
   // Tratamento de erros
-  private handleError(error: any): string {
+  private handleError(error: unknown): string {
     if (error instanceof Error) {
       // Erros específicos do Supabase
       if (error.message.includes('row-level security policy')) {

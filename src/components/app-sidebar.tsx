@@ -50,15 +50,10 @@ const data = {
           url: "/admin/geral",
         },
         {
-          title: "Configurações",
-          url: "/admin/configuracoes",
+          title: "Configuração",
+          url: "/conta?section=geral",
         },
       ],
-    },
-    {
-      title: "Conta",
-      url: "/conta",
-      icon: Bot
     },
   ],
   outros: [
@@ -69,19 +64,19 @@ const data = {
       items: [
         {
           title: "Geral",
-          url: "/config/geral",
+          url: "/conta?section=geral",
         },
         {
           title: "Perfil",
-          url: "/config/perfil",
+          url: "/conta?section=perfil",
         },
         {
           title: "Cobrança",
-          url: "/config/cobranca",
+          url: "/conta?section=cobranca",
         },
         {
           title: "Notificações",
-          url: "/config/notificacoes",
+          url: "/conta?section=notificacoes",
         },
       ],
     },
@@ -92,11 +87,11 @@ const data = {
       items: [
         {
           title: "CRM",
-          url: "/api/crm",
+          url: "/conta?section=crm",
         },
         {
           title: "Modelos",
-          url: "/api/modelos",
+          url: "/conta?section=modelos",
         },
       ],
     },

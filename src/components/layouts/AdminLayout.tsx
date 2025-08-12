@@ -25,11 +25,15 @@ interface AdminLayoutProps {
     title: string
     href?: string
   }[]
+  pageTitle?: string
 }
 
-export function AdminLayout({ children, breadcrumb }: AdminLayoutProps) {
+export function AdminLayout({ children, breadcrumb, pageTitle }: AdminLayoutProps) {
   const { isBlurred } = useBlur()
   const { isOpen, setIsOpen } = useSidebarState()
+  
+  // Use the last breadcrumb item as page title, or pageTitle prop, or default to "Geral"
+  const currentPageTitle = pageTitle || breadcrumb?.[breadcrumb.length - 1]?.title || "Geral"
 
   return (
     <SidebarProvider 
@@ -40,7 +44,7 @@ export function AdminLayout({ children, breadcrumb }: AdminLayoutProps) {
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
+          <div className="flex items-center gap-2 px-4 flex-1">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
@@ -69,10 +73,14 @@ export function AdminLayout({ children, breadcrumb }: AdminLayoutProps) {
           </div>
         </header>
         <div 
-          className={`flex flex-1 flex-col gap-4 p-4 pt-0 transition-all duration-300 ${
+          className={`flex flex-1 flex-col p-4 pt-0 transition-all duration-300 ${
             isBlurred ? 'blur-sm pointer-events-none' : ''
           }`}
         >
+          <Separator className="w-full mb-4" />
+          <div className="flex items-center gap-2 px-0 mb-1">
+            <h1 className="text-2xl font-semibold">{currentPageTitle}</h1>
+          </div>
           {children}
         </div>
       </SidebarInset>

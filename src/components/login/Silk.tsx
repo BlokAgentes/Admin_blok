@@ -69,7 +69,7 @@ void main() {
 }
 `;
 
-const SilkPlane = forwardRef(function SilkPlane({ uniforms }: { uniforms: any }, ref: any) {
+const SilkPlane = forwardRef(function SilkPlane({ uniforms }: { uniforms: Record<string, any> }, ref: React.Ref<THREE.Mesh>) {
   const { viewport } = useThree();
 
   useLayoutEffect(() => {

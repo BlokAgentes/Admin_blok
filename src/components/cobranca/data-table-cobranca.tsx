@@ -35,102 +35,85 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-// Sample data adapted for the client flows platform
-export interface Payment {
+// Data interface for billing/invoice records
+export interface Cobranca {
   id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
+  valor: number
+  status: "pendente" | "pago" | "vencido" | "cancelado"
+  cliente: string
   email: string
-  clientName: string
-  date: Date
-  method: "credit" | "debit" | "paypal" | "transfer"
-  description: string
+  dataVencimento: Date
+  dataPagamento?: Date
+  descricao: string
+  numeroFatura: string
+  metodoPagamento?: "cartao" | "boleto" | "pix" | "transferencia"
 }
 
-const data: Payment[] = [
+const dataCobranca: Cobranca[] = [
   {
-    id: "m5gr84i9",
-    amount: 316.50,
-    status: "success",
-    email: "joao.silva@example.com",
-    clientName: "João Silva",
-    date: new Date("2025-07-31"),
-    method: "credit",
-    description: "Fluxo Premium - Assinatura mensal"
+    id: "fat001",
+    valor: 850.00,
+    status: "pago",
+    cliente: "João Silva Ltda",
+    email: "joao@silvaempresa.com",
+    dataVencimento: new Date("2025-08-15"),
+    dataPagamento: new Date("2025-08-12"),
+    descricao: "Serviços de automação - Agosto 2025",
+    numeroFatura: "FAT-2025-001",
+    metodoPagamento: "pix"
   },
   {
-    id: "3u1reuv4",
-    amount: 242.00,
-    status: "success",
-    email: "maria.santos@example.com",
-    clientName: "Maria Santos",
-    date: new Date("2025-07-30"),
-    method: "debit",
-    description: "Fluxo Professional - Assinatura mensal"
+    id: "fat002", 
+    valor: 1200.50,
+    status: "pendente",
+    cliente: "Maria Santos ME",
+    email: "maria@santosme.com.br",
+    dataVencimento: new Date("2025-08-20"),
+    descricao: "Plataforma CRM - Mensalidade",
+    numeroFatura: "FAT-2025-002"
   },
   {
-    id: "derv1ws0",
-    amount: 837.75,
-    status: "processing",
-    email: "pedro.oliveira@example.com",
-    clientName: "Pedro Oliveira",
-    date: new Date("2025-07-29"),
-    method: "paypal",
-    description: "Fluxo Enterprise - Assinatura trimestral"
+    id: "fat003",
+    valor: 2400.00,
+    status: "vencido",
+    cliente: "Pedro Oliveira & Cia",
+    email: "pedro@oliveiracia.com",
+    dataVencimento: new Date("2025-07-30"),
+    descricao: "Sistema de gestão completo",
+    numeroFatura: "FAT-2025-003"
   },
   {
-    id: "5kma53ae",
-    amount: 874.20,
-    status: "success",
-    email: "ana.costa@example.com",
-    clientName: "Ana Costa",
-    date: new Date("2025-07-28"),
-    method: "transfer",
-    description: "Fluxo Business - Setup inicial"
+    id: "fat004",
+    valor: 650.75,
+    status: "pago",
+    cliente: "Ana Costa Digital",
+    email: "contato@anacosta.digital",
+    dataVencimento: new Date("2025-08-10"),
+    dataPagamento: new Date("2025-08-09"),
+    descricao: "Consultoria em automação",
+    numeroFatura: "FAT-2025-004",
+    metodoPagamento: "cartao"
   },
   {
-    id: "bhqecj4p",
-    amount: 721.00,
-    status: "failed",
-    email: "carlos.mendes@example.com",
-    clientName: "Carlos Mendes",
-    date: new Date("2025-07-27"),
-    method: "credit",
-    description: "Fluxo Professional - Assinatura anual"
-  },
-  {
-    id: "p9kx2m8n",
-    amount: 150.00,
-    status: "pending",
-    email: "lucia.ferreira@example.com",
-    clientName: "Lucia Ferreira",
-    date: new Date("2025-07-26"),
-    method: "debit",
-    description: "Fluxo Basic - Assinatura mensal"
-  },
-  {
-    id: "t7nv4j2w",
-    amount: 450.00,
-    status: "success",
-    email: "roberto.lima@example.com",
-    clientName: "Roberto Lima",
-    date: new Date("2025-07-25"),
-    method: "paypal",
-    description: "Fluxo Professional - Assinatura trimestral"
-  },
-  {
-    id: "k3lw8x9z",
-    amount: 1250.00,
-    status: "success",
-    email: "juliana.souza@example.com",
-    clientName: "Juliana Souza",
-    date: new Date("2025-07-24"),
-    method: "transfer",
-    description: "Fluxo Enterprise - Assinatura anual"
-  },
+    id: "fat005",
+    valor: 3200.00,
+    status: "pendente",
+    cliente: "Carlos Mendes Corp",
+    email: "carlos@mendescorp.com",
+    dataVencimento: new Date("2025-08-25"),
+    descricao: "Desenvolvimento de fluxos personalizados",
+    numeroFatura: "FAT-2025-005"
+  }
 ]
 
-export const columns: ColumnDef<Payment>[] = [
+const statusMap = {
+  pendente: { label: "Pendente", color: "bg-yellow-100 text-yellow-800" },
+  pago: { label: "Pago", color: "bg-green-100 text-green-800" },
+  vencido: { label: "Vencido", color: "bg-red-100 text-red-800" },
+  cancelado: { label: "Cancelado", color: "bg-gray-100 text-gray-800" }
+}
+
+export const columns: ColumnDef<Cobranca>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -140,7 +123,7 @@ export const columns: ColumnDef<Payment>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Selecionar todas"
+        aria-label="Selecionar todos"
       />
     ),
     cell: ({ row }) => (
@@ -154,7 +137,24 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "clientName",
+    accessorKey: "numeroFatura",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nº Fatura
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => (
+      <div className="font-medium">{row.getValue("numeroFatura")}</div>
+    ),
+  },
+  {
+    accessorKey: "cliente",
     header: ({ column }) => {
       return (
         <Button
@@ -167,107 +167,77 @@ export const columns: ColumnDef<Payment>[] = [
       )
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("clientName")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("email")}</div>
-    ),
-  },
-  {
-    accessorKey: "description",
-    header: "Descrição",
-    cell: ({ row }) => (
-      <div className="max-w-xs truncate">
-        {row.getValue("description")}
+      <div>
+        <div className="font-medium">{row.getValue("cliente")}</div>
+        <div className="text-sm text-muted-foreground">{row.original.email}</div>
       </div>
     ),
   },
   {
-    accessorKey: "amount",
-    header: ({ column }) => {
-      return (
-        <div className="text-right">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Valor (R$)
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      )
-    },
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-      const formatted = new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(amount)
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
-  {
-    accessorKey: "date",
+    accessorKey: "valor",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Data
+          Valor
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const date = new Date(row.getValue("date"))
-      const formatted = new Intl.DateTimeFormat("pt-BR").format(date)
-      return <div>{formatted}</div>
+      const valor = parseFloat(row.getValue("valor"))
+      const formatted = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(valor)
+      return <div className="font-medium">{formatted}</div>
     },
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string
-      const statusMap = {
-        pending: "Pendente",
-        processing: "Processando",
-        success: "Sucesso",
-        failed: "Falhou"
-      }
-      const colorMap = {
-        pending: "bg-yellow-100 text-yellow-800",
-        processing: "bg-blue-100 text-blue-800",
-        success: "bg-green-100 text-green-800",
-        failed: "bg-red-100 text-red-800"
-      }
+      const status = row.getValue("status") as keyof typeof statusMap
+      const statusInfo = statusMap[status]
       return (
-        <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${colorMap[status as keyof typeof colorMap]}`}>
-          {statusMap[status as keyof typeof statusMap]}
-        </div>
+        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusInfo.color}`}>
+          {statusInfo.label}
+        </span>
       )
     },
+  },
+  {
+    accessorKey: "dataVencimento",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Vencimento
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const date = row.getValue("dataVencimento") as Date
+      return <div>{date.toLocaleDateString("pt-BR")}</div>
+    },
+  },
+  {
+    accessorKey: "descricao",
+    header: "Descrição",
+    cell: ({ row }) => (
+      <div className="max-w-[200px] truncate">{row.getValue("descricao")}</div>
+    ),
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const cobranca = row.original
 
       return (
         <DropdownMenu>
@@ -280,16 +250,14 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(cobranca.id)}
             >
-              Copiar ID do pagamento
+              Copiar ID da fatura
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Ver detalhes do cliente</DropdownMenuItem>
-            <DropdownMenuItem>Ver histórico de pagamentos</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              Cancelar pagamento
-            </DropdownMenuItem>
+            <DropdownMenuItem>Ver detalhes</DropdownMenuItem>
+            <DropdownMenuItem>Enviar cobrança</DropdownMenuItem>
+            <DropdownMenuItem>Marcar como pago</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -297,15 +265,14 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ]
 
-export function DataTableDemo() {
+export function DataTableCobranca() {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
-    data,
+    data: dataCobranca,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -325,12 +292,12 @@ export function DataTableDemo() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-4">
         <Input
-          placeholder="Filtrar..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filtrar por cliente..."
+          value={(table.getColumn("cliente")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("cliente")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -361,7 +328,7 @@ export function DataTableDemo() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="overflow-hidden rounded-md border">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -412,7 +379,7 @@ export function DataTableDemo() {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
+        <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} de{" "}
           {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
         </div>
