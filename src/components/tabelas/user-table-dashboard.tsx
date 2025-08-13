@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { Hourglass, UserCheck, UserPlus, Users } from "lucide-react"
 
 export function UserTableDashboard() {
   const [showModal, setShowModal] = useState(false)
@@ -36,7 +37,7 @@ export function UserTableDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <div className="text-xl">👥</div>
+            <Users className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm font-medium text-muted-foreground">Total</span>
           </div>
           <div className="text-3xl font-semibold text-foreground mb-1">12,000</div>
@@ -55,7 +56,7 @@ export function UserTableDashboard() {
 
         <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <div className="text-xl">👤</div>
+            <UserPlus className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm font-medium text-muted-foreground">Novos</span>
           </div>
           <div className="text-3xl font-semibold text-foreground mb-1">+350</div>
@@ -74,7 +75,7 @@ export function UserTableDashboard() {
 
         <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <div className="text-xl">⏳</div>
+            <Hourglass className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm font-medium text-muted-foreground">Pending Verifications</span>
           </div>
           <div className="text-3xl font-semibold text-foreground mb-1">42</div>
@@ -93,7 +94,7 @@ export function UserTableDashboard() {
 
         <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <div className="text-xl">👤</div>
+            <UserCheck className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm font-medium text-muted-foreground">Active Users</span>
           </div>
           <div className="text-3xl font-semibold text-foreground mb-1">7,800</div>
