@@ -19,20 +19,7 @@ export function UserTableDashboard() {
 
   return (
     <div className="pt-4">
-      {/* Header */}
-      <div className="flex justify-end items-center mb-8">
-        <div className="flex gap-3">
-          <button 
-            onClick={() => setShowModal(true)}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 4V12M4 8H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            Add User
-          </button>
-        </div>
-      </div>
+      {/* Header removed: Add User will live next to View in controls */}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
@@ -124,31 +111,42 @@ export function UserTableDashboard() {
             />
           </div>
         </div>
-        <div className="relative">
+        <div className="flex items-center gap-2">
           <button 
-            onClick={() => setShowViewDropdown(!showViewDropdown)}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+            onClick={() => setShowModal(true)}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              <circle cx="6" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
-              <circle cx="10" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M8 4V12M4 8H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
-            View
+            Add User
           </button>
-          {showViewDropdown && (
-            <div className="absolute top-full right-0 mt-2 bg-popover border border-border rounded-lg p-2 w-64 shadow-lg z-10">
-              <div className="text-sm font-semibold text-foreground p-2 mb-2">Toggle columns</div>
-              {['Email', 'PhoneNumber', 'CreatedAt', 'LastLoginAt'].map((column) => (
-                <div key={column} className="flex items-center gap-3 p-2 rounded hover:bg-accent hover:text-accent-foreground cursor-pointer">
-                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
-                    <span className="text-primary-foreground text-xs">✓</span>
+          <div className="relative">
+            <button 
+              onClick={() => setShowViewDropdown(!showViewDropdown)}
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="6" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
+                <circle cx="10" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
+              </svg>
+              View
+            </button>
+            {showViewDropdown && (
+              <div className="absolute top-full right-0 mt-2 bg-popover border border-border rounded-lg p-2 w-64 shadow-lg z-10">
+                <div className="text-sm font-semibold text-foreground p-2 mb-2">Toggle columns</div>
+                {['Email', 'PhoneNumber', 'CreatedAt', 'LastLoginAt'].map((column) => (
+                  <div key={column} className="flex items-center gap-3 p-2 rounded hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                      <span className="text-primary-foreground text-xs">✓</span>
+                    </div>
+                    <span className="text-sm text-foreground">{column}</span>
                   </div>
-                  <span className="text-sm text-foreground">{column}</span>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
