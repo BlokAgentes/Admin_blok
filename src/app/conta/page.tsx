@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { 
   Settings, 
-  User, 
+  BadgeCheck,
   CreditCard, 
   Package, 
   Zap, 
@@ -27,7 +27,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 
 const menuItems = [
   { id: "geral", label: "Geral", icon: Settings },
-  { id: "perfil", label: "Perfil", icon: User },
+  { id: "perfil", label: "Perfil", icon: BadgeCheck },
   { id: "cobranca", label: "Cobrança", icon: CreditCard },
   { id: "notificacoes", label: "Notificações", icon: Bell },
   { id: "crm", label: "CRM", icon: Building },
@@ -967,7 +967,7 @@ function ContaPageContent() {
       </div>
 
       {/* AI Models Section */}
-      <div className="space-y-6">
+    <div className="space-y-6">
         <h2 className="text-black text-lg font-semibold mb-4">Modelos de IA Disponíveis</h2>
         
         {/* OpenAI Models */}
@@ -1259,4 +1259,4 @@ function ContaPageContent() {
       </div>
     </AdminLayout>
   )
-}
+} 
