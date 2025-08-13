@@ -12,12 +12,9 @@ export default function CobrancaPage() {
     >
       <div className="flex-1 space-y-6 p-4 md:p-6 lg:p-8">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Cobrança</h1>
-          <p className="text-muted-foreground">
-            Gerencie seus pagamentos, boletos e cobranças.
-          </p>
-        </div>
+        <p className="text-3xl font-bold tracking-tight text-muted-foreground">
+          Gerencie seus pagamentos, boletos e cobranças.
+        </p>
 
         {/* Data Table */}
         <DataTableCobranca />
