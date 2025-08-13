@@ -107,7 +107,7 @@ export function NavUser({
                 <CreditCard />
                 Cobrança
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/config/notificacoes')}>
+              <DropdownMenuItem onClick={() => router.push('/conta?section=notificacoes')}>
                 <Bell />
                 Notificações
               </DropdownMenuItem>
