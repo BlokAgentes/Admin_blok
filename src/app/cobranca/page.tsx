@@ -10,7 +10,7 @@ export default function CobrancaPage() {
         { title: "Cobrança" }
       ]}
     >
-      <div className="flex-1 space-y-6">
+      <div className="flex-1 space-y-4">
         {/* Header */}
         <p className="text-muted-foreground">
           Gerencie seus pagamentos, boletos e cobranças.
