@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export function UserTableDashboard() {
   const [showModal, setShowModal] = useState(false)
@@ -16,6 +16,17 @@ export function UserTableDashboard() {
       [field]: !prev[field]
     }))
   }
+
+  // Prevent background scroll when modal is open
+  useEffect(() => {
+    if (showModal) {
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [showModal])
 
   return (
     <div className="pt-4">
@@ -262,7 +273,7 @@ export function UserTableDashboard() {
       {/* Add User Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
-          <div className="bg-background rounded-xl w-full max-w-md mx-4 animate-in slide-in-from-top-4 border border-border shadow-lg" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-background rounded-xl w-full max-w-md mx-4 animate-in slide-in-from-top-4 border border-border shadow-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center p-6 border-b border-border">
               <h2 className="font-semibold leading-none tracking-tight">Adicionar novo usuário</h2>
               <button 
@@ -272,7 +283,7 @@ export function UserTableDashboard() {
                 ×
               </button>
             </div>
-            <div className="p-6">
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
               <p className="text-sm text-muted-foreground mb-6">Crie um novo usuário aqui. Clique em salvar quando terminar.</p>
               
               <div className="space-y-4">
