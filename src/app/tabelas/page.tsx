@@ -1,7 +1,7 @@
 "use client"
 
 import { AdminLayout } from "@/components/layouts/AdminLayout"
-import { DataTableDemo } from "@/components/tabelas/data-table-demo"
+import { UserTableDashboard } from "@/components/tabelas/user-table-dashboard"
 
 
 export default function TabelasPage() {
@@ -13,7 +13,7 @@ export default function TabelasPage() {
     >
       <div className="flex-1 p-4 md:p-6 lg:p-8">
         {/* Data Table */}
-        <DataTableDemo />
+        <UserTableDashboard />
       </div>
     </AdminLayout>
   )
