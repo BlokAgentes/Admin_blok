@@ -18,7 +18,7 @@ export function UserTableDashboard() {
   }
 
   return (
-    <div>
+    <div className="pt-4">
       {/* Header */}
       <div className="flex justify-end items-center mb-8">
         <div className="flex gap-3">
