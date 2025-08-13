@@ -79,16 +79,11 @@ export default function ConversasPage() {
         { title: "Conversas" }
       ]}
     >
-      <div className="flex-1 space-y-6 p-4 md:p-6 lg:p-8">
+      <div className="flex-1 space-y-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Conversas</h1>
-            <p className="text-muted-foreground">
-              Gerencie suas comunicações com clientes
-            </p>
-          </div>
-        </div>
+        <p className="text-muted-foreground">
+          Gerencie suas comunicações com clientes
+        </p>
 
         {/* Conteúdo removido conforme solicitado: sem componentes abaixo da descrição */}
       </div>
