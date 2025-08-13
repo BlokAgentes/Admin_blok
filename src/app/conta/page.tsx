@@ -20,7 +20,7 @@ import {
   Receipt,
   Smartphone
 } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 const menuItems = [
@@ -33,6 +33,14 @@ const menuItems = [
 ]
 
 export default function ContaPage() {
+  return (
+    <Suspense fallback={null}>
+      <ContaPageContent />
+    </Suspense>
+  )
+}
+
+function ContaPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [activeSection, setActiveSection] = useState("geral")
@@ -730,4 +738,4 @@ export default function ContaPage() {
       </div>
     </AdminLayout>
   )
-} 
+}
