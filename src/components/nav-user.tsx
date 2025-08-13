@@ -101,7 +101,7 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheck />
-                Conta
+                Perfil
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/cobranca')}>
                 <CreditCard />
