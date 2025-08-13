@@ -7,7 +7,7 @@ export default function CobrancaPage() {
   return (
     <AdminLayout 
       breadcrumb={[
-        { title: "Cobrança1" }
+        { title: "Cobrança" }
       ]}
     >
       <div className="flex-1 space-y-6 p-4 md:p-6 lg:p-8">
