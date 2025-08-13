@@ -37,13 +37,13 @@ export function AdminLayout({ children, breadcrumb, pageTitle }: AdminLayoutProp
 
   return (
     <SidebarProvider 
-      className="min-h-screen bg-[hsl(240_5.9%_13.3%)] font-geist"
+      className="min-h-screen bg-background font-geist"
       open={isOpen}
       onOpenChange={setIsOpen}
     >
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+      <SidebarInset className="bg-background rounded-tl-xl rounded-tr-xl overflow-hidden">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-background rounded-tl-xl rounded-tr-xl">
           <div className="flex items-center gap-2 px-4 flex-1">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
@@ -73,7 +73,7 @@ export function AdminLayout({ children, breadcrumb, pageTitle }: AdminLayoutProp
           </div>
         </header>
         <div 
-          className={`flex flex-1 flex-col p-4 pt-0 transition-all duration-300 ${
+          className={`flex flex-1 flex-col p-4 pt-0 transition-all duration-300 bg-background ${
             isBlurred ? 'blur-sm pointer-events-none' : ''
           }`}
         >

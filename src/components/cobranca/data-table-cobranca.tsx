@@ -27,6 +27,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   Table,
   TableBody,
   TableCell,
@@ -270,9 +277,36 @@ export function DataTableCobranca() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [selectedMonth, setSelectedMonth] = React.useState<string>("todos")
+
+  const months = [
+    { value: "todos", label: "Todos os meses" },
+    { value: "01", label: "Janeiro" },
+    { value: "02", label: "Fevereiro" },
+    { value: "03", label: "Março" },
+    { value: "04", label: "Abril" },
+    { value: "05", label: "Maio" },
+    { value: "06", label: "Junho" },
+    { value: "07", label: "Julho" },
+    { value: "08", label: "Agosto" },
+    { value: "09", label: "Setembro" },
+    { value: "10", label: "Outubro" },
+    { value: "11", label: "Novembro" },
+    { value: "12", label: "Dezembro" },
+  ]
+
+  const filteredData = React.useMemo(() => {
+    if (selectedMonth === "todos") {
+      return dataCobranca
+    }
+    return dataCobranca.filter(item => {
+      const month = item.dataVencimento.getMonth() + 1
+      return month.toString().padStart(2, '0') === selectedMonth
+    })
+  }, [selectedMonth])
 
   const table = useReactTable({
-    data: dataCobranca,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -293,14 +327,18 @@ export function DataTableCobranca() {
   return (
     <div className="w-full">
       <div className="flex items-center py-4 gap-4">
-        <Input
-          placeholder="Filtrar por cliente..."
-          value={(table.getColumn("cliente")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("cliente")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+          <SelectTrigger className="max-w-sm">
+            <SelectValue placeholder="Selecionar mês" />
+          </SelectTrigger>
+          <SelectContent>
+            {months.map((month) => (
+              <SelectItem key={month.value} value={month.value}>
+                {month.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

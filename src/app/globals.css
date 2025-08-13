@@ -89,11 +89,18 @@
   }
   html {
     height: 100%;
+    border-bottom: none;
+    box-shadow: none;
   }
   body {
     @apply bg-background text-foreground;
     min-height: 100vh;
     overflow-x: hidden;
+    background-color: white;
+    border-bottom: none;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -102,7 +109,10 @@
   background-color: oklch(var(--sidebar));
   color: oklch(var(--sidebar-foreground));
   border-right: 1px solid oklch(var(--sidebar-border));
+  border-bottom: none;
   transition: width 0.3s ease-in-out;
+  min-height: 100vh;
+  height: 100vh;
   /* Prevent black line artifacts during hover */
   will-change: transform;
   backface-visibility: hidden;
@@ -143,7 +153,7 @@
 }
 
 .sidebar-footer {
-  border-top: 1px solid oklch(var(--sidebar-border));
+  border-top: none;
   padding: 1rem;
 }
 
@@ -197,6 +207,8 @@
 [data-sidebar="sidebar"] {
   position: relative;
   overflow: hidden;
+  min-height: 100vh !important;
+  height: 100vh !important;
 }
 
 [data-sidebar="sidebar"]::before {
@@ -213,6 +225,31 @@
 [data-sidebar="sidebar"] > * {
   position: relative;
   z-index: 1;
+}
+
+/* Ensure sidebar content area fills full height without affecting main content */
+[data-variant="inset"] [data-sidebar="sidebar"] {
+  min-height: 100vh !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any borders, shadows or visual elements from sidebar and its children */
+[data-sidebar="sidebar"],
+[data-sidebar="sidebar"] * {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* Specifically target potential bottom borders */
+.sidebar-footer,
+[data-sidebar="sidebar"] footer,
+[data-sidebar="sidebar"] [role="contentinfo"] {
+  border-bottom: none !important;
+  border-top: none !important;
+  box-shadow: none !important;
 }
 
 /* 21.set Login Animations */

@@ -18,7 +18,9 @@ import {
   MapPin,
   Calendar,
   Receipt,
-  Smartphone
+  Smartphone,
+  Eye,
+  EyeOff
 } from "lucide-react"
 import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -46,6 +48,31 @@ function ContaPageContent() {
   const [activeSection, setActiveSection] = useState("geral")
   const [selectedNotification, setSelectedNotification] = useState("nothing")
   const [selectedPayment, setSelectedPayment] = useState("credit")
+  const [activeTab, setActiveTab] = useState("api-keys")
+  const [apiKeys, setApiKeys] = useState({
+    openai: "",
+    anthropic: "",
+    gemini: "",
+    grok: ""
+  })
+  const [apiToggleStates, setApiToggleStates] = useState({
+    openai: false,
+    anthropic: false,
+    gemini: false,
+    grok: false
+  })
+  const [selectedModels, setSelectedModels] = useState({
+    openai: "",
+    anthropic: "",
+    gemini: "",
+    grok: ""
+  })
+  const [keyVisibility, setKeyVisibility] = useState({
+    openai: false,
+    anthropic: false,
+    gemini: false,
+    grok: false
+  })
   const [emailSettings, setEmailSettings] = useState({
     communication: false,
     marketing: false,
@@ -58,6 +85,35 @@ function ContaPageContent() {
     setEmailSettings(prev => ({
       ...prev,
       [type]: !prev[type]
+    }))
+  }
+
+  // Funções para gerenciar API keys e modelos
+  const toggleApiKeyVisibility = (provider: keyof typeof keyVisibility) => {
+    setKeyVisibility(prev => ({
+      ...prev,
+      [provider]: !prev[provider]
+    }))
+  }
+
+  const toggleApiState = (provider: keyof typeof apiToggleStates) => {
+    setApiToggleStates(prev => ({
+      ...prev,
+      [provider]: !prev[provider]
+    }))
+  }
+
+  const saveApiKey = (provider: keyof typeof apiKeys, value: string) => {
+    setApiKeys(prev => ({
+      ...prev,
+      [provider]: value
+    }))
+  }
+
+  const selectModel = (provider: keyof typeof selectedModels, value: string) => {
+    setSelectedModels(prev => ({
+      ...prev,
+      [provider]: value
     }))
   }
 
@@ -670,20 +726,485 @@ function ContaPageContent() {
   )
 
   const renderModelosContent = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Modelos de IA</CardTitle>
-          <CardDescription>
-            Gerencie e configure modelos de inteligência artificial.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Configurações de modelos em desenvolvimento.
-          </p>
-        </CardContent>
-      </Card>
+    <div className="max-w-[800px] space-y-6">
+      <style jsx>{`
+        .api-tabs {
+          display: flex;
+          border-bottom: 1px solid #e5e7eb;
+          margin-bottom: 32px;
+        }
+        .api-tab {
+          padding: 12px 0;
+          margin-right: 32px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #6b7280;
+          cursor: pointer;
+          border-bottom: 2px solid transparent;
+          transition: all 0.2s ease;
+        }
+        .api-tab.active {
+          color: #000000;
+          border-bottom-color: #0ea5e9;
+        }
+        .api-tab:hover {
+          color: #000000;
+        }
+        .model-section {
+          padding: 20px;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          margin-bottom: 16px;
+          background-color: #ffffff;
+        }
+        .model-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+        .model-title {
+          color: #000000;
+          font-size: 16px;
+          font-weight: 600;
+        }
+        .model-controls {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .model-selector {
+          position: relative;
+        }
+        .model-dropdown {
+          padding: 8px 32px 8px 12px;
+          font-size: 14px;
+          color: #000000;
+          background-color: #ffffff;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          outline: none;
+          appearance: none;
+          cursor: pointer;
+          min-width: 200px;
+          transition: border-color 0.2s ease;
+        }
+        .model-dropdown:focus {
+          border-color: #000000;
+          box-shadow: 0 0 0 1px #000000;
+        }
+        .model-dropdown:hover {
+          border-color: #9ca3af;
+        }
+        .model-dropdown:disabled {
+          background-color: #f9fafb;
+          color: #9ca3af;
+          cursor: not-allowed;
+        }
+        .model-selector::after {
+          content: '▼';
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 12px;
+          color: #6b7280;
+          pointer-events: none;
+        }
+        .api-toggle-container {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .toggle-label {
+          color: #6b7280;
+          font-size: 12px;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        .api-toggle-switch {
+          position: relative;
+          width: 44px;
+          height: 24px;
+          background-color: #d1d5db;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+        .api-toggle-switch.active {
+          background-color: #10b981;
+        }
+        .api-toggle-slider {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          width: 20px;
+          height: 20px;
+          background-color: #ffffff;
+          border-radius: 50%;
+          transition: transform 0.3s ease;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .api-toggle-switch.active .api-toggle-slider {
+          transform: translateX(20px);
+        }
+        .model-description {
+          color: #6b7280;
+          font-size: 13px;
+          line-height: 1.4;
+        }
+        .api-key-section {
+          margin-top: 16px;
+        }
+        .api-key-label {
+          color: #000000;
+          font-size: 14px;
+          font-weight: 500;
+          margin-bottom: 8px;
+          display: block;
+        }
+        .api-key-input-container {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .api-key-input {
+          width: 100%;
+          padding: 12px 40px 12px 16px;
+          font-size: 14px;
+          color: #000000;
+          background-color: #ffffff;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          outline: none;
+          transition: border-color 0.2s ease;
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+          letter-spacing: 0.5px;
+        }
+        .api-key-input:focus {
+          border-color: #000000;
+          box-shadow: 0 0 0 1px #000000;
+        }
+        .api-key-input::placeholder {
+          color: #9ca3af;
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+        .api-key-input:disabled {
+          background-color: #f9fafb;
+          color: #9ca3af;
+          cursor: not-allowed;
+        }
+        .api-key-input:disabled::placeholder {
+          color: #d1d5db;
+        }
+        .toggle-visibility {
+          position: absolute;
+          right: 12px;
+          background: none;
+          border: none;
+          color: #6b7280;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+          transition: color 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .toggle-visibility:hover {
+          color: #000000;
+        }
+        .toggle-visibility:disabled {
+          color: #d1d5db;
+          cursor: not-allowed;
+        }
+        .version-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 0;
+          border-bottom: 1px solid #f3f4f6;
+        }
+        .version-label {
+          color: #000000;
+          font-size: 14px;
+          font-weight: 500;
+        }
+        .version-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .version-date {
+          color: #6b7280;
+          font-size: 14px;
+        }
+        .version-badge {
+          background-color: #f3f4f6;
+          color: #6b7280;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 500;
+        }
+      `}</style>
+
+      {/* Tabs */}
+      <div className="api-tabs">
+        <div 
+          className={`api-tab ${activeTab === "api-keys" ? "active" : ""}`}
+          onClick={() => setActiveTab("api-keys")}
+        >
+          API Keys
+        </div>
+        <div 
+          className={`api-tab ${activeTab === "custo" ? "active" : ""}`}
+          onClick={() => setActiveTab("custo")}
+        >
+          Custo
+        </div>
+      </div>
+
+      {/* AI Models Section */}
+      <div className="space-y-6">
+        <h2 className="text-black text-lg font-semibold mb-4">Modelos de IA Disponíveis</h2>
+        
+        {/* OpenAI Models */}
+        <div className="model-section">
+          <div className="model-header">
+            <h3 className="model-title">OpenAI</h3>
+            <div className="model-controls">
+              <div className="model-selector">
+                <select 
+                  className="model-dropdown"
+                  value={selectedModels.openai}
+                  onChange={(e) => selectModel('openai', e.target.value)}
+                  disabled={!apiToggleStates.openai}
+                >
+                  <option value="">Selecione um modelo</option>
+                  <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                  <option value="gpt-4">GPT-4</option>
+                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                  <option value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K</option>
+                  <option value="text-davinci-003">Text Davinci 003</option>
+                </select>
+              </div>
+              <div className="api-toggle-container">
+                <span className="toggle-label">API</span>
+                <div 
+                  className={`api-toggle-switch ${apiToggleStates.openai ? "active" : ""}`}
+                  onClick={() => toggleApiState('openai')}
+                >
+                  <div className="api-toggle-slider"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="model-description">
+            Modelos de linguagem avançados da OpenAI para conversação e geração de texto.
+          </div>
+          <div className="api-key-section">
+            <label className="api-key-label">Chave de API OpenAI</label>
+            <div className="api-key-input-container">
+              <input 
+                type={keyVisibility.openai ? "text" : "password"}
+                className="api-key-input"
+                placeholder="sk-..."
+                value={apiKeys.openai}
+                onChange={(e) => saveApiKey('openai', e.target.value)}
+                disabled={!apiToggleStates.openai}
+              />
+              <button 
+                className="toggle-visibility"
+                onClick={() => toggleApiKeyVisibility('openai')}
+                disabled={!apiToggleStates.openai}
+                title="Mostrar/Ocultar"
+              >
+                {keyVisibility.openai ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Anthropic Models */}
+        <div className="model-section">
+          <div className="model-header">
+            <h3 className="model-title">Anthropic</h3>
+            <div className="model-controls">
+              <div className="model-selector">
+                <select 
+                  className="model-dropdown"
+                  value={selectedModels.anthropic}
+                  onChange={(e) => selectModel('anthropic', e.target.value)}
+                  disabled={!apiToggleStates.anthropic}
+                >
+                  <option value="">Selecione um modelo</option>
+                  <option value="claude-3-opus">Claude 3 Opus</option>
+                  <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                  <option value="claude-3-haiku">Claude 3 Haiku</option>
+                  <option value="claude-2.1">Claude 2.1</option>
+                  <option value="claude-instant">Claude Instant</option>
+                </select>
+              </div>
+              <div className="api-toggle-container">
+                <span className="toggle-label">API</span>
+                <div 
+                  className={`api-toggle-switch ${apiToggleStates.anthropic ? "active" : ""}`}
+                  onClick={() => toggleApiState('anthropic')}
+                >
+                  <div className="api-toggle-slider"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="model-description">
+            Assistentes de IA seguros e úteis da Anthropic com foco em conversação natural.
+          </div>
+          <div className="api-key-section">
+            <label className="api-key-label">Chave de API Anthropic</label>
+            <div className="api-key-input-container">
+              <input 
+                type={keyVisibility.anthropic ? "text" : "password"}
+                className="api-key-input"
+                placeholder="sk-ant-..."
+                value={apiKeys.anthropic}
+                onChange={(e) => saveApiKey('anthropic', e.target.value)}
+                disabled={!apiToggleStates.anthropic}
+              />
+              <button 
+                className="toggle-visibility"
+                onClick={() => toggleApiKeyVisibility('anthropic')}
+                disabled={!apiToggleStates.anthropic}
+                title="Mostrar/Ocultar"
+              >
+                {keyVisibility.anthropic ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Google Gemini Models */}
+        <div className="model-section">
+          <div className="model-header">
+            <h3 className="model-title">Google Gemini</h3>
+            <div className="model-controls">
+              <div className="model-selector">
+                <select 
+                  className="model-dropdown"
+                  value={selectedModels.gemini}
+                  onChange={(e) => selectModel('gemini', e.target.value)}
+                  disabled={!apiToggleStates.gemini}
+                >
+                  <option value="">Selecione um modelo</option>
+                  <option value="gemini-pro">Gemini Pro</option>
+                  <option value="gemini-pro-vision">Gemini Pro Vision</option>
+                  <option value="gemini-ultra">Gemini Ultra</option>
+                  <option value="palm-2">PaLM 2</option>
+                  <option value="text-bison">Text Bison</option>
+                </select>
+              </div>
+              <div className="api-toggle-container">
+                <span className="toggle-label">API</span>
+                <div 
+                  className={`api-toggle-switch ${apiToggleStates.gemini ? "active" : ""}`}
+                  onClick={() => toggleApiState('gemini')}
+                >
+                  <div className="api-toggle-slider"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="model-description">
+            Modelos multimodais do Google com capacidades avançadas de texto e visão.
+          </div>
+          <div className="api-key-section">
+            <label className="api-key-label">Chave de API Google Gemini</label>
+            <div className="api-key-input-container">
+              <input 
+                type={keyVisibility.gemini ? "text" : "password"}
+                className="api-key-input"
+                placeholder="AIza..."
+                value={apiKeys.gemini}
+                onChange={(e) => saveApiKey('gemini', e.target.value)}
+                disabled={!apiToggleStates.gemini}
+              />
+              <button 
+                className="toggle-visibility"
+                onClick={() => toggleApiKeyVisibility('gemini')}
+                disabled={!apiToggleStates.gemini}
+                title="Mostrar/Ocultar"
+              >
+                {keyVisibility.gemini ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* xAI Grok Models */}
+        <div className="model-section">
+          <div className="model-header">
+            <h3 className="model-title">xAI Grok</h3>
+            <div className="model-controls">
+              <div className="model-selector">
+                <select 
+                  className="model-dropdown"
+                  value={selectedModels.grok}
+                  onChange={(e) => selectModel('grok', e.target.value)}
+                  disabled={!apiToggleStates.grok}
+                >
+                  <option value="">Selecione um modelo</option>
+                  <option value="grok-1">Grok-1</option>
+                  <option value="grok-1.5">Grok-1.5</option>
+                  <option value="grok-2">Grok-2</option>
+                  <option value="grok-beta">Grok Beta</option>
+                </select>
+              </div>
+              <div className="api-toggle-container">
+                <span className="toggle-label">API</span>
+                <div 
+                  className={`api-toggle-switch ${apiToggleStates.grok ? "active" : ""}`}
+                  onClick={() => toggleApiState('grok')}
+                >
+                  <div className="api-toggle-slider"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="model-description">
+            Modelos de IA da xAI com acesso a informações em tempo real e personalidade única.
+          </div>
+          <div className="api-key-section">
+            <label className="api-key-label">Chave de API xAI Grok</label>
+            <div className="api-key-input-container">
+              <input 
+                type={keyVisibility.grok ? "text" : "password"}
+                className="api-key-input"
+                placeholder="xai-..."
+                value={apiKeys.grok}
+                onChange={(e) => saveApiKey('grok', e.target.value)}
+                disabled={!apiToggleStates.grok}
+              />
+              <button 
+                className="toggle-visibility"
+                onClick={() => toggleApiKeyVisibility('grok')}
+                disabled={!apiToggleStates.grok}
+                title="Mostrar/Ocultar"
+              >
+                {keyVisibility.grok ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="version-item">
+          <span className="version-label">Versão Global da API</span>
+          <div className="version-info">
+            <span className="version-date">13-Ago-2025</span>
+            <span className="version-badge">Última Versão</span>
+          </div>
+        </div>
+      </div>
     </div>
   )
 

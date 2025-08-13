@@ -13,7 +13,7 @@ export default function CobrancaPage() {
       <div className="flex-1 space-y-6 p-4 md:p-6 lg:p-8">
         {/* Header */}
         <p className="text-muted-foreground">
-          Gerencie faturas, cobranças e controle financeiro
+          Gerencie seus pagamentos, boletos e cobranças.
         </p>
 
         {/* Data Table */}
