@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Client Flows Platform",
+  title: "Blok",
   description: "Plataforma para gerenciamento de fluxos de clientes",
   icons: {
     icon: "/vercel.svg",
