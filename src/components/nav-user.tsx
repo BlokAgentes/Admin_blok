@@ -103,11 +103,11 @@ export function NavUser({
                 <BadgeCheck />
                 Conta
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/cobranca')}>
                 <CreditCard />
                 Cobrança
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/config/notificacoes')}>
                 <Bell />
                 Notificações
               </DropdownMenuItem>
