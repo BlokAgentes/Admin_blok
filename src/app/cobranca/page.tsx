@@ -13,12 +13,9 @@ export default function CobrancaPage() {
       <div className="flex-1 space-y-6 p-4 md:p-6 lg:p-8">
         {/* Data Table */}
         <div className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold">Faturas e Cobranças</h2>
-            <p className="text-muted-foreground">
-              Gerencie faturas, cobranças e controle financeiro
-            </p>
-          </div>
+          <p className="text-muted-foreground">
+            Gerencie faturas, cobranças e controle financeiro
+          </p>
           
           <DataTableCobranca />
         </div>
