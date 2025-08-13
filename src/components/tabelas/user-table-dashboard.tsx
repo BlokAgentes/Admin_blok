@@ -24,7 +24,7 @@ export function UserTableDashboard() {
         <div className="flex gap-3">
           <button 
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 4V12M4 8H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -39,17 +39,17 @@ export function UserTableDashboard() {
         <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="text-xl">👥</div>
-            <span className="text-sm font-medium text-gray-600">Total</span>
+            <span className="text-sm font-medium text-muted-foreground">Total</span>
           </div>
-          <div className="text-3xl font-semibold text-gray-900 mb-1">12,000</div>
-          <div className="text-sm text-gray-500">+5% em relação ao mês passado</div>
+          <div className="text-3xl font-semibold text-foreground mb-1">12,000</div>
+          <div className="text-sm text-muted-foreground">+5% em relação ao mês passado</div>
           <div className="absolute top-5 right-5 group">
-            <svg className="w-4 h-4 text-gray-300 cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="w-4 h-4 text-muted-foreground cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
               <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1" fill="none"/>
               <circle cx="10" cy="6" r="1"/>
               <rect x="9" y="9" width="2" height="5" rx="1"/>
             </svg>
-            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-black text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10">
+            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-popover text-popover-foreground px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10 border border-border shadow-md">
               Total number of users
             </span>
           </div>
@@ -58,17 +58,17 @@ export function UserTableDashboard() {
         <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="text-xl">👤</div>
-            <span className="text-sm font-medium text-gray-600">Novos</span>
+            <span className="text-sm font-medium text-muted-foreground">Novos</span>
           </div>
-          <div className="text-3xl font-semibold text-gray-900 mb-1">+350</div>
-          <div className="text-sm text-gray-500">+10% em relação ao mês passado</div>
+          <div className="text-3xl font-semibold text-foreground mb-1">+350</div>
+          <div className="text-sm text-muted-foreground">+10% em relação ao mês passado</div>
           <div className="absolute top-5 right-5 group">
-            <svg className="w-4 h-4 text-gray-300 cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="w-4 h-4 text-muted-foreground cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
               <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1" fill="none"/>
               <circle cx="10" cy="6" r="1"/>
               <rect x="9" y="9" width="2" height="5" rx="1"/>
             </svg>
-            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-black text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10">
+            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-popover text-popover-foreground px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10 border border-border shadow-md">
               New Users
             </span>
           </div>
@@ -77,17 +77,17 @@ export function UserTableDashboard() {
         <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="text-xl">⏳</div>
-            <span className="text-sm font-medium text-gray-600">Pending Verifications</span>
+            <span className="text-sm font-medium text-muted-foreground">Pending Verifications</span>
           </div>
-          <div className="text-3xl font-semibold text-gray-900 mb-1">42</div>
-          <div className="text-sm text-gray-500">2% of users</div>
+          <div className="text-3xl font-semibold text-foreground mb-1">42</div>
+          <div className="text-sm text-muted-foreground">2% of users</div>
           <div className="absolute top-5 right-5 group">
-            <svg className="w-4 h-4 text-gray-300 cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="w-4 h-4 text-muted-foreground cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
               <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1" fill="none"/>
               <circle cx="10" cy="6" r="1"/>
               <rect x="9" y="9" width="2" height="5" rx="1"/>
             </svg>
-            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-black text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10">
+            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-popover text-popover-foreground px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10 border border-border shadow-md">
               Pending Verifications
             </span>
           </div>
@@ -96,17 +96,17 @@ export function UserTableDashboard() {
         <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="text-xl">👤</div>
-            <span className="text-sm font-medium text-gray-600">Active Users</span>
+            <span className="text-sm font-medium text-muted-foreground">Active Users</span>
           </div>
-          <div className="text-3xl font-semibold text-gray-900 mb-1">7,800</div>
-          <div className="text-sm text-gray-500">65% of all users</div>
+          <div className="text-3xl font-semibold text-foreground mb-1">7,800</div>
+          <div className="text-sm text-muted-foreground">65% of all users</div>
           <div className="absolute top-5 right-5 group">
-            <svg className="w-4 h-4 text-gray-300 cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
+            <svg className="w-4 h-4 text-muted-foreground cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
               <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1" fill="none"/>
               <circle cx="10" cy="6" r="1"/>
               <rect x="9" y="9" width="2" height="5" rx="1"/>
             </svg>
-            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-black text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10">
+            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-popover text-popover-foreground px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10 border border-border shadow-md">
               Active Users
             </span>
           </div>
@@ -120,14 +120,14 @@ export function UserTableDashboard() {
             <input 
               type="text" 
               placeholder="Filter tasks..." 
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600"
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
         </div>
         <div className="relative">
           <button 
             onClick={() => setShowViewDropdown(!showViewDropdown)}
-            className="flex items-center gap-2 px-3 py-2 bg-background border border-border rounded-lg text-sm hover:bg-accent/50"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -138,13 +138,13 @@ export function UserTableDashboard() {
           </button>
           {showViewDropdown && (
             <div className="absolute top-full right-0 mt-2 bg-popover border border-border rounded-lg p-2 w-64 shadow-lg z-10">
-              <div className="text-sm font-semibold text-gray-900 p-2 mb-2">Toggle columns</div>
+              <div className="text-sm font-semibold text-foreground p-2 mb-2">Toggle columns</div>
               {['Email', 'PhoneNumber', 'CreatedAt', 'LastLoginAt'].map((column) => (
-                <div key={column} className="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
-                  <div className="w-4 h-4 border-2 border-black rounded bg-black flex items-center justify-center">
-                    <span className="text-white text-xs">✓</span>
+                <div key={column} className="flex items-center gap-3 p-2 rounded hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
                   </div>
-                  <span className="text-sm text-gray-700">{column}</span>
+                  <span className="text-sm text-foreground">{column}</span>
                 </div>
               ))}
             </div>
@@ -158,16 +158,16 @@ export function UserTableDashboard() {
           <thead className="bg-muted/50 border-t border-b border-border">
             <tr>
               <th className="text-left p-3 w-10">
-                <input type="checkbox" className="w-4 h-4 border border-gray-300 rounded cursor-pointer"/>
+                <input type="checkbox" className="w-4 h-4 border border-input rounded cursor-pointer"/>
               </th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600">Name</th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600">Email ↓</th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600">Phone Number</th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600">Registered Date</th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600">Last Login Date</th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600">Status</th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600">Role</th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600"></th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Name</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Email ↓</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Phone Number</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Registered Date</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Last Login Date</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Role</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground"></th>
             </tr>
           </thead>
           <tbody>
@@ -185,15 +185,15 @@ export function UserTableDashboard() {
             ].map((user, index) => (
               <tr key={index} className="border-b border-border hover:bg-muted/50 transition-colors">
                 <td className="p-4">
-                  <input type="checkbox" className="w-4 h-4 border border-gray-300 rounded cursor-pointer"/>
+                  <input type="checkbox" className="w-4 h-4 border border-input rounded cursor-pointer"/>
                 </td>
                 <td className="p-4">
-                  <span className="text-sm font-medium text-gray-900 underline cursor-pointer">{user.name}</span>
+                  <span className="text-sm font-medium text-foreground underline cursor-pointer hover:text-primary">{user.name}</span>
                 </td>
-                <td className="p-4 text-sm text-gray-700">{user.email}</td>
-                <td className="p-4 text-sm text-gray-700">{user.phone}</td>
-                <td className="p-4 text-sm text-gray-700">{user.registered}</td>
-                <td className="p-4 text-sm text-gray-700">{user.lastLogin}</td>
+                <td className="p-4 text-sm text-foreground">{user.email}</td>
+                <td className="p-4 text-sm text-foreground">{user.phone}</td>
+                <td className="p-4 text-sm text-foreground">{user.registered}</td>
+                <td className="p-4 text-sm text-foreground">{user.lastLogin}</td>
                 <td className="p-4">
                   <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                     user.status === 'Active' ? 'bg-green-100 text-green-800' :
@@ -205,13 +205,13 @@ export function UserTableDashboard() {
                   </span>
                 </td>
                 <td className="p-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span>{user.icon}</span>
                     <span>{user.role}</span>
                   </div>
                 </td>
                 <td className="p-4">
-                  <button className="text-gray-400 hover:text-gray-600 p-1">⋯</button>
+                  <button className="text-muted-foreground hover:text-foreground p-1 transition-colors">⋯</button>
                 </td>
               </tr>
             ))}
@@ -221,37 +221,37 @@ export function UserTableDashboard() {
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-5 pt-4">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-muted-foreground">
           0 of 30 row(s) selected.
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-gray-700">
+          <div className="flex items-center gap-2 text-sm text-foreground">
             <span>Rows per page</span>
-            <select className="px-3 py-1 border border-gray-300 rounded text-sm bg-white cursor-pointer">
+            <select className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
               <option>10</option>
               <option>20</option>
               <option>50</option>
             </select>
           </div>
-          <div className="text-sm text-gray-700">Page 1 of 3</div>
+          <div className="text-sm text-foreground">Page 1 of 3</div>
           <div className="flex gap-1">
-            <button disabled className="w-8 h-8 flex items-center justify-center bg-white border border-gray-300 rounded opacity-30 cursor-not-allowed">
+            <button disabled className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 <path d="M6 4L2 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </button>
-            <button disabled className="w-8 h-8 flex items-center justify-center bg-white border border-gray-300 rounded opacity-30 cursor-not-allowed">
+            <button disabled className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </button>
-            <button className="w-8 h-8 flex items-center justify-center bg-white border border-gray-300 rounded hover:bg-gray-50">
+            <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </button>
-            <button className="w-8 h-8 flex items-center justify-center bg-white border border-gray-300 rounded hover:bg-gray-50">
+            <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 <path d="M10 4L14 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -266,46 +266,46 @@ export function UserTableDashboard() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
           <div className="bg-background rounded-xl w-full max-w-md mx-4 animate-in slide-in-from-top-4 border border-border shadow-lg" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-gray-900">Add New User</h2>
+              <h2 className="font-semibold leading-none tracking-tight">Add New User</h2>
               <button 
                 onClick={() => setShowModal(false)}
-                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded-lg transition-colors"
+                className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-accent rounded-lg transition-colors"
               >
                 ×
               </button>
             </div>
             <div className="p-6">
-              <p className="text-sm text-gray-600 mb-6">Create new user here. Click save when you're done.</p>
+              <p className="text-sm text-muted-foreground mb-6">Create new user here. Click save when you're done.</p>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                  <input type="text" placeholder="John" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600"/>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">First Name</label>
+                  <input type="text" placeholder="John" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                  <input type="text" placeholder="Doe" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600"/>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last Name</label>
+                  <input type="text" placeholder="Doe" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                  <input type="text" placeholder="john_doe" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600"/>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Username</label>
+                  <input type="text" placeholder="john_doe" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  <input type="email" placeholder="john.doe@gmail.com" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600"/>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+                  <input type="email" placeholder="john.doe@gmail.com" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                  <input type="tel" placeholder="+123456789" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600"/>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Phone Number</label>
+                  <input type="tel" placeholder="+123456789" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600 bg-white cursor-pointer">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Role</label>
+                  <select className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
                     <option value="">Select a role</option>
                     <option value="admin">Admin</option>
                     <option value="manager">Manager</option>
@@ -315,17 +315,17 @@ export function UserTableDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
                   <div className="relative">
                     <input 
                       type={passwordVisible.password ? "text" : "password"} 
                       placeholder="••••••••" 
-                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600"
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pr-10 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     />
                     <button 
                       type="button"
                       onClick={() => togglePassword('password')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 transition-colors"
                     >
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M10 4C4.5 4 1 10 1 10s3.5 6 9 6 9-6 9-6-3.5-6-9-6z" stroke="currentColor" strokeWidth="1.5"/>
@@ -336,17 +336,17 @@ export function UserTableDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Confirm Password</label>
                   <div className="relative">
                     <input 
                       type={passwordVisible.confirmPassword ? "text" : "password"} 
                       placeholder="••••••••" 
-                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-gray-600"
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pr-10 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     />
                     <button 
                       type="button"
                       onClick={() => togglePassword('confirmPassword')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 transition-colors"
                     >
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M10 4C4.5 4 1 10 1 10s3.5 6 9 6 9-6 9-6-3.5-6-9-6z" stroke="currentColor" strokeWidth="1.5"/>
@@ -360,7 +360,7 @@ export function UserTableDashboard() {
             <div className="p-6 border-t border-border flex justify-end">
               <button 
                 onClick={() => setShowModal(false)}
-                className="px-5 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
               >
                 Save changes
               </button>
