@@ -20,8 +20,7 @@ export function UserTableDashboard() {
   return (
     <div className="max-w-[1400px] mx-auto bg-white rounded-xl p-6 shadow-sm">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Tabela</h1>
+      <div className="flex justify-end items-center mb-8">
         <div className="flex gap-3">
           <button 
             onClick={() => setShowModal(true)}
