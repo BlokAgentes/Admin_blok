@@ -11,14 +11,11 @@ export default function TabelasPage() {
         { title: "Tabelas" }
       ]}
     >
-      <div className="flex-1 space-y-6 p-4 md:p-6 lg:p-8">
+      <div className="flex-1 space-y-4">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Tabelas</h1>
-          <p className="text-muted-foreground">
-            Gerencie usuários, dados e informações do sistema
-          </p>
-        </div>
+        <p className="text-muted-foreground">
+          Gerencie usuários, dados e informações do sistema
+        </p>
 
         {/* Data Table */}
         <UserTableDashboard />
