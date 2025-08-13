@@ -18,7 +18,7 @@ export function UserTableDashboard() {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto bg-white rounded-xl p-6 shadow-sm">
+    <div>
       {/* Header */}
       <div className="flex justify-end items-center mb-8">
         <div className="flex gap-3">
@@ -36,7 +36,7 @@ export function UserTableDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <div className="bg-white border border-gray-200 rounded-xl p-5 relative">
+        <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="text-xl">👥</div>
             <span className="text-sm font-medium text-gray-600">Total</span>
@@ -55,7 +55,7 @@ export function UserTableDashboard() {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-5 relative">
+        <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="text-xl">👤</div>
             <span className="text-sm font-medium text-gray-600">Novos</span>
@@ -74,7 +74,7 @@ export function UserTableDashboard() {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-5 relative">
+        <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="text-xl">⏳</div>
             <span className="text-sm font-medium text-gray-600">Pending Verifications</span>
@@ -93,7 +93,7 @@ export function UserTableDashboard() {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-5 relative">
+        <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <div className="text-xl">👤</div>
             <span className="text-sm font-medium text-gray-600">Active Users</span>
@@ -127,7 +127,7 @@ export function UserTableDashboard() {
         <div className="relative">
           <button 
             onClick={() => setShowViewDropdown(!showViewDropdown)}
-            className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+            className="flex items-center gap-2 px-3 py-2 bg-background border border-border rounded-lg text-sm hover:bg-accent/50"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -137,7 +137,7 @@ export function UserTableDashboard() {
             View
           </button>
           {showViewDropdown && (
-            <div className="absolute top-full right-0 mt-2 bg-white border border-gray-300 rounded-lg p-2 w-64 shadow-lg z-10">
+            <div className="absolute top-full right-0 mt-2 bg-popover border border-border rounded-lg p-2 w-64 shadow-lg z-10">
               <div className="text-sm font-semibold text-gray-900 p-2 mb-2">Toggle columns</div>
               {['Email', 'PhoneNumber', 'CreatedAt', 'LastLoginAt'].map((column) => (
                 <div key={column} className="flex items-center gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
@@ -155,7 +155,7 @@ export function UserTableDashboard() {
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
-          <thead className="bg-gray-50 border-t border-b border-gray-200">
+          <thead className="bg-muted/50 border-t border-b border-border">
             <tr>
               <th className="text-left p-3 w-10">
                 <input type="checkbox" className="w-4 h-4 border border-gray-300 rounded cursor-pointer"/>
@@ -183,7 +183,7 @@ export function UserTableDashboard() {
               { name: "Kameron Turcotte", email: "kameron.heller25@yahoo.com", phone: "+19715552582", registered: "26 Nov, 2024", lastLogin: "18 Jul, 2025", status: "Inactive", role: "Superadmin", icon: "⭕" },
               { name: "Vernie Collins", email: "vernie75@yahoo.com", phone: "+17988907194", registered: "26 Apr, 2025", lastLogin: "29 May, 2025", status: "Invited", role: "Superadmin", icon: "⭕" }
             ].map((user, index) => (
-              <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+              <tr key={index} className="border-b border-border hover:bg-muted/50 transition-colors">
                 <td className="p-4">
                   <input type="checkbox" className="w-4 h-4 border border-gray-300 rounded cursor-pointer"/>
                 </td>
@@ -264,8 +264,8 @@ export function UserTableDashboard() {
       {/* Add User Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
-          <div className="bg-white rounded-xl w-full max-w-md mx-4 animate-in slide-in-from-top-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center p-6 border-b border-gray-200">
+          <div className="bg-background rounded-xl w-full max-w-md mx-4 animate-in slide-in-from-top-4 border border-border shadow-lg" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-6 border-b border-border">
               <h2 className="text-lg font-semibold text-gray-900">Add New User</h2>
               <button 
                 onClick={() => setShowModal(false)}
@@ -357,7 +357,7 @@ export function UserTableDashboard() {
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-gray-200 flex justify-end">
+            <div className="p-6 border-t border-border flex justify-end">
               <button 
                 onClick={() => setShowModal(false)}
                 className="px-5 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
