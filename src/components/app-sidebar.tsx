@@ -96,18 +96,7 @@ const data = {
       ],
     },
   ],
-  navSecondary: [
-    {
-      title: "Suporte",
-      url: "/suporte",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "/feedback",
-      icon: Send,
-    },
-  ],
+  navSecondary: [],
   projects: [
     {
       name: "Tabelas",

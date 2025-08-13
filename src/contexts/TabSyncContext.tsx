@@ -39,10 +39,7 @@ export function TabSyncProvider({ children }: { children: ReactNode }) {
       tab = 'crm'
     } else if (path.startsWith('/api/modelos')) {
       tab = 'modelos'
-    } else if (path.startsWith('/suporte')) {
-      tab = 'suporte'
-    } else if (path.startsWith('/feedback')) {
-      tab = 'feedback'
+    // Removed suporte/feedback tabs
     }
     
     if (tab && tab !== activeTab) {
