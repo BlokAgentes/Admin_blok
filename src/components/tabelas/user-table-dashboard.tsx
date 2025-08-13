@@ -106,7 +106,7 @@ export function UserTableDashboard() {
           <div className="relative w-70">
             <input 
               type="text" 
-              placeholder="Filter tasks..." 
+              placeholder="Buscar" 
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
@@ -119,7 +119,7 @@ export function UserTableDashboard() {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 4V12M4 8H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
-            Add
+            Adicionar
           </button>
           <div className="relative">
             <button 
@@ -264,7 +264,7 @@ export function UserTableDashboard() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
           <div className="bg-background rounded-xl w-full max-w-md mx-4 animate-in slide-in-from-top-4 border border-border shadow-lg" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center p-6 border-b border-border">
-              <h2 className="font-semibold leading-none tracking-tight">Add New User</h2>
+              <h2 className="font-semibold leading-none tracking-tight">Adicionar novo usuário</h2>
               <button 
                 onClick={() => setShowModal(false)}
                 className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:bg-accent rounded-lg transition-colors"
@@ -273,47 +273,47 @@ export function UserTableDashboard() {
               </button>
             </div>
             <div className="p-6">
-              <p className="text-sm text-muted-foreground mb-6">Create new user here. Click save when you're done.</p>
+              <p className="text-sm text-muted-foreground mb-6">Crie um novo usuário aqui. Clique em salvar quando terminar.</p>
               
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">First Name</label>
-                  <input type="text" placeholder="John" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Nome</label>
+                  <input type="text" placeholder="João" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last Name</label>
-                  <input type="text" placeholder="Doe" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Sobrenome</label>
+                  <input type="text" placeholder="Silva" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Username</label>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Nome de usuário</label>
                   <input type="text" placeholder="john_doe" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
-                  <input type="email" placeholder="john.doe@gmail.com" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">E-mail</label>
+                  <input type="email" placeholder="joao.silva@gmail.com" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Phone Number</label>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Telefone</label>
                   <input type="tel" placeholder="+123456789" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"/>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Role</label>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Cargo</label>
                   <select className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
-                    <option value="">Select a role</option>
-                    <option value="admin">Admin</option>
-                    <option value="manager">Manager</option>
-                    <option value="cashier">Cashier</option>
-                    <option value="superadmin">Superadmin</option>
+                    <option value="">Selecione um cargo</option>
+                    <option value="admin">Administrador</option>
+                    <option value="manager">Gerente</option>
+                    <option value="cashier">Caixa</option>
+                    <option value="superadmin">Superadministrador</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Senha</label>
                   <div className="relative">
                     <input 
                       type={passwordVisible.password ? "text" : "password"} 
@@ -334,7 +334,7 @@ export function UserTableDashboard() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Confirm Password</label>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Confirmar senha</label>
                   <div className="relative">
                     <input 
                       type={passwordVisible.confirmPassword ? "text" : "password"} 
@@ -360,7 +360,7 @@ export function UserTableDashboard() {
                 onClick={() => setShowModal(false)}
                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
               >
-                Save changes
+                Salvar alterações
               </button>
             </div>
           </div>
