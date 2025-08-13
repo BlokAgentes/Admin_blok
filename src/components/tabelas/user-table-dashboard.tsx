@@ -119,7 +119,7 @@ export function UserTableDashboard() {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 4V12M4 8H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
-            Add User
+            Add
           </button>
           <div className="relative">
             <button 
@@ -131,7 +131,7 @@ export function UserTableDashboard() {
                 <circle cx="6" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
                 <circle cx="10" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
               </svg>
-              View
+              Filtro
             </button>
             {showViewDropdown && (
               <div className="absolute top-full right-0 mt-2 bg-popover border border-border rounded-lg p-2 w-64 shadow-lg z-10">
