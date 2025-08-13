@@ -96,44 +96,7 @@ export default function ConversasPage() {
           </div>
         </div>
 
-        {/* Cards de estatísticas */}
-        <ConversasStats 
-          totalContacts={stats.totalContacts}
-          unreadMessages={totalNaoLidos}
-          totalConversations={mockConversations.length}
-        />
-
-        {/* Lista de conversas */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Conversas Recentes</h2>
-            <span className="text-sm text-muted-foreground">{mockConversations.length} conversas</span>
-          </div>
-          
-          <Card className="overflow-hidden">
-            <CardHeader className="border-b">
-              <CardTitle className="text-base flex items-center justify-between">
-                <span>Mensagens</span>
-                <span className="text-sm font-normal text-muted-foreground">
-                  Clique para abrir a conversa
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-400px)] min-h-[300px] max-h-[600px]">
-                <div className="divide-y divide-border">
-                  {mockConversations.map((conversation) => (
-                    <ConversationItem 
-                      key={conversation.id} 
-                      conversation={conversation}
-                      onClick={() => console.log(`Abrir conversa com ${conversation.clientName}`)}
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Conteúdo removido conforme solicitado: sem componentes abaixo da descrição */}
       </div>
     </AdminLayout>
   )
