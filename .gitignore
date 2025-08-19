@@ -62,4 +62,12 @@ node_modules/
 
 # Task files
 # tasks.json
-# tasks/ 
+# tasks/
+
+# Monorepo specific
+apps/frontend/.next/
+apps/backend/dist/
+packages/*/dist/
+packages/*/build/
+*/.next/
+*/dist/ 
