@@ -1,11 +1,71 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Hourglass, UserCheck, UserPlus, Users } from "lucide-react"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardToolbar } from '@/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { ArrowDown, ArrowUp, MoreHorizontal, Pin, Settings, Share2, Trash, TriangleAlert } from 'lucide-react'
+
+const stats = [
+  {
+    title: 'Quantidade Total',
+    value: 122380,
+    delta: 15.1,
+    lastMonth: 105922,
+    positive: true,
+    prefix: '',
+    suffix: '',
+  },
+  {
+    title: 'Pedidos Criados',
+    value: 1902380,
+    delta: -2.0,
+    lastMonth: 2002098,
+    positive: false,
+    prefix: '',
+    suffix: '',
+  },
+  {
+    title: 'Eficiência',
+    value: 98.1,
+    delta: 0.4,
+    lastMonth: 97.8,
+    positive: true,
+    prefix: '',
+    suffix: '%',
+    format: (v: number) => `${v}%`,
+    lastFormat: (v: number) => `${v}%`,
+  },
+  {
+    title: 'Usuários Ativos*',
+    value: 48210,
+    delta: 3.7,
+    lastMonth: 46480,
+    positive: true,
+    prefix: '',
+    suffix: '',
+  },
+];
+
+function formatNumber(n: number) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+  if (n >= 1_000) {
+    // Use a locale-independent approach to avoid hydration mismatches
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  return n.toString();
+}
 
 export function UserTableDashboard() {
   const [showModal, setShowModal] = useState(false)
-  const [showViewDropdown, setShowViewDropdown] = useState(false)
   const [passwordVisible, setPasswordVisible] = useState({
     password: false,
     confirmPassword: false
@@ -34,82 +94,62 @@ export function UserTableDashboard() {
       {/* Header removed: Add User will live next to View in controls */}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <Users className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm font-medium text-muted-foreground">Total</span>
-          </div>
-          <div className="text-3xl font-semibold text-foreground mb-1">12,000</div>
-          <div className="text-sm text-muted-foreground">+5% em relação ao mês passado</div>
-          <div className="absolute top-5 right-5 group">
-            <svg className="w-4 h-4 text-muted-foreground cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
-              <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1" fill="none"/>
-              <circle cx="10" cy="6" r="1"/>
-              <rect x="9" y="9" width="2" height="5" rx="1"/>
-            </svg>
-            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-popover text-popover-foreground px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10 border border-border shadow-md">
-              Total number of users
-            </span>
-          </div>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <UserPlus className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm font-medium text-muted-foreground">Novos</span>
-          </div>
-          <div className="text-3xl font-semibold text-foreground mb-1">+350</div>
-          <div className="text-sm text-muted-foreground">+10% em relação ao mês passado</div>
-          <div className="absolute top-5 right-5 group">
-            <svg className="w-4 h-4 text-muted-foreground cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
-              <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1" fill="none"/>
-              <circle cx="10" cy="6" r="1"/>
-              <rect x="9" y="9" width="2" height="5" rx="1"/>
-            </svg>
-            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-popover text-popover-foreground px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10 border border-border shadow-md">
-              New Users
-            </span>
-          </div>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <Hourglass className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm font-medium text-muted-foreground">Pending Verifications</span>
-          </div>
-          <div className="text-3xl font-semibold text-foreground mb-1">42</div>
-          <div className="text-sm text-muted-foreground">2% of users</div>
-          <div className="absolute top-5 right-5 group">
-            <svg className="w-4 h-4 text-muted-foreground cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
-              <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1" fill="none"/>
-              <circle cx="10" cy="6" r="1"/>
-              <rect x="9" y="9" width="2" height="5" rx="1"/>
-            </svg>
-            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-popover text-popover-foreground px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10 border border-border shadow-md">
-              Pending Verifications
-            </span>
-          </div>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-5 relative shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <UserCheck className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm font-medium text-muted-foreground">Active Users</span>
-          </div>
-          <div className="text-3xl font-semibold text-foreground mb-1">7,800</div>
-          <div className="text-sm text-muted-foreground">65% of all users</div>
-          <div className="absolute top-5 right-5 group">
-            <svg className="w-4 h-4 text-muted-foreground cursor-pointer" viewBox="0 0 20 20" fill="currentColor">
-              <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1" fill="none"/>
-              <circle cx="10" cy="6" r="1"/>
-              <rect x="9" y="9" width="2" height="5" rx="1"/>
-            </svg>
-            <span className="invisible group-hover:visible absolute -top-10 -right-2 bg-popover text-popover-foreground px-4 py-2 rounded-lg text-sm whitespace-nowrap z-10 border border-border shadow-md">
-              Active Users
-            </span>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {stats.map((stat, index) => (
+          <Card key={index}>
+            <CardHeader className="border-0">
+              <CardTitle className="text-muted-foreground text-sm font-medium">{stat.title}</CardTitle>
+              <CardToolbar>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" side="bottom">
+                    <DropdownMenuItem>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Configurações
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <TriangleAlert className="mr-2 h-4 w-4" /> Adicionar Alerta
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Pin className="mr-2 h-4 w-4" /> Fixar no Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Share2 className="mr-2 h-4 w-4" /> Compartilhar
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-destructive">
+                      <Trash className="mr-2 h-4 w-4" />
+                      Remover
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </CardToolbar>
+            </CardHeader>
+            <CardContent className="space-y-2.5">
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl font-medium text-foreground tracking-tight">
+                  {stat.format ? stat.format(stat.value) : stat.prefix + formatNumber(stat.value) + stat.suffix}
+                </span>
+                <Badge variant={stat.positive ? 'secondary' : 'destructive'} className={`text-xs ${stat.positive ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-red-100 text-red-800 hover:bg-red-200'}`}>
+                  {stat.delta > 0 ? <ArrowUp className="w-3 h-3 mr-1" /> : <ArrowDown className="w-3 h-3 mr-1" />}
+                  {stat.delta}%
+                </Badge>
+              </div>
+              <div className="text-xs text-muted-foreground mt-2 border-t pt-2.5">
+                Vs mês passado:{' '}
+                <span className="font-medium text-foreground">
+                  {stat.lastFormat
+                    ? stat.lastFormat(stat.lastMonth)
+                    : stat.prefix + formatNumber(stat.lastMonth) + stat.suffix}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Table Controls */}
@@ -133,32 +173,85 @@ export function UserTableDashboard() {
             </svg>
             Adicionar
           </button>
-          <div className="relative">
-            <button 
-              onClick={() => setShowViewDropdown(!showViewDropdown)}
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                <circle cx="6" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
-                <circle cx="10" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
-              </svg>
-              Filtro
-            </button>
-            {showViewDropdown && (
-              <div className="absolute top-full right-0 mt-2 bg-popover border border-border rounded-lg p-2 w-64 shadow-lg z-10">
-                <div className="text-sm font-semibold text-foreground p-2 mb-2">Toggle columns</div>
-                {['Email', 'PhoneNumber', 'CreatedAt', 'LastLoginAt'].map((column) => (
-                  <div key={column} className="flex items-center gap-3 p-2 rounded hover:bg-accent hover:text-accent-foreground cursor-pointer">
-                    <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
-                      <span className="text-primary-foreground text-xs">✓</span>
-                    </div>
-                    <span className="text-sm text-foreground">{column}</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  <circle cx="6" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
+                  <circle cx="10" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
+                </svg>
+                Filtro
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="bottom" className="w-64">
+              <div className="text-sm font-semibold text-foreground p-2 mb-2">Filtrar Colunas</div>
+              
+              <DropdownMenuItem>
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  <span className="text-sm text-foreground">Nome</span>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem>
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span className="text-sm text-foreground">Email</span>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem>
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span className="text-sm text-foreground">Telefone</span>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem>
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span className="text-sm text-foreground">Data de Registro</span>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem>
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span className="text-sm text-foreground">Último Login</span>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem>
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span className="text-sm text-foreground">Status</span>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem>
+                <div className="flex items-center gap-3 w-full">
+                  <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span className="text-sm text-foreground">Cargo</span>
+                </div>
+              </DropdownMenuItem>
+              
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -221,7 +314,30 @@ export function UserTableDashboard() {
                   </div>
                 </td>
                 <td className="p-4">
-                  <button className="text-muted-foreground hover:text-foreground p-1 transition-colors">⋯</button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="text-muted-foreground hover:text-foreground p-1 transition-colors">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                      <DropdownMenuItem>
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        Adicionar em Cima
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        Adicionar em Baixo
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-destructive">
+                        Remover
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
             ))}
@@ -230,44 +346,30 @@ export function UserTableDashboard() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-5 pt-4">
-        <div className="text-sm text-muted-foreground">
-          0 of 30 row(s) selected.
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-foreground">
-            <span>Rows per page</span>
-            <select className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
-              <option>10</option>
-              <option>20</option>
-              <option>50</option>
-            </select>
-          </div>
-          <div className="text-sm text-foreground">Page 1 of 3</div>
-          <div className="flex gap-1">
-            <button disabled className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                <path d="M6 4L2 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-            <button disabled className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-            <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-            <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                <path d="M10 4L14 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-          </div>
+      <div className="flex justify-end items-center mt-5 pt-4">
+        <div className="flex gap-1">
+          <button disabled className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              <path d="M6 4L2 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+          <button disabled className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+          <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+          <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 w-8">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              <path d="M10 4L14 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -379,13 +481,6 @@ export function UserTableDashboard() {
         </div>
       )}
 
-      {/* Click outside to close dropdown */}
-      {showViewDropdown && (
-        <div 
-          className="fixed inset-0 z-0" 
-          onClick={() => setShowViewDropdown(false)}
-        />
-      )}
     </div>
   )
 }

@@ -273,173 +273,161 @@ export const columns: ColumnDef<Cobranca>[] = [
 ]
 
 export function DataTableCobranca() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [selectedMonth, setSelectedMonth] = React.useState<string>("todos")
+  const [showModal, setShowModal] = React.useState(false)
+  const [showViewDropdown, setShowViewDropdown] = React.useState(false)
 
-  const months = [
-    { value: "todos", label: "Todos os meses" },
-    { value: "01", label: "Janeiro" },
-    { value: "02", label: "Fevereiro" },
-    { value: "03", label: "Março" },
-    { value: "04", label: "Abril" },
-    { value: "05", label: "Maio" },
-    { value: "06", label: "Junho" },
-    { value: "07", label: "Julho" },
-    { value: "08", label: "Agosto" },
-    { value: "09", label: "Setembro" },
-    { value: "10", label: "Outubro" },
-    { value: "11", label: "Novembro" },
-    { value: "12", label: "Dezembro" },
-  ]
-
-  const filteredData = React.useMemo(() => {
-    if (selectedMonth === "todos") {
-      return dataCobranca
+  // Prevent background scroll when modal is open
+  React.useEffect(() => {
+    if (showModal) {
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
     }
-    return dataCobranca.filter(item => {
-      const month = item.dataVencimento.getMonth() + 1
-      return month.toString().padStart(2, '0') === selectedMonth
-    })
-  }, [selectedMonth])
-
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  })
+  }, [showModal])
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4 gap-4">
-        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-          <SelectTrigger className="max-w-sm">
-            <SelectValue placeholder="Selecionar mês" />
-          </SelectTrigger>
-          <SelectContent>
-            {months.map((month) => (
-              <SelectItem key={month.value} value={month.value}>
-                {month.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Colunas <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  Nenhum resultado encontrado.
-                </TableCell>
-              </TableRow>
+    <div className="pt-4">
+      {/* Table Controls */}
+      <div className="flex justify-between items-center mb-5">
+        <div className="flex items-center gap-4">
+          <div className="relative w-70">
+            <input 
+              type="text" 
+              placeholder="Buscar" 
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setShowModal(true)}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 4V12M4 8H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            Adicionar
+          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowViewDropdown(!showViewDropdown)}
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="6" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
+                <circle cx="10" cy="8" r="2" fill="white" stroke="currentColor" strokeWidth="1.5"/>
+              </svg>
+              Filtro
+            </button>
+            {showViewDropdown && (
+              <div className="absolute top-full right-0 mt-2 bg-popover border border-border rounded-lg p-2 w-64 shadow-lg z-10">
+                <div className="text-sm font-semibold text-foreground p-2 mb-2">Toggle columns</div>
+                {['NumeroFatura', 'Cliente', 'Valor', 'Status', 'DataVencimento', 'Descricao'].map((column) => (
+                  <div key={column} className="flex items-center gap-3 p-2 rounded hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    <div className="w-4 h-4 border-2 border-primary rounded bg-primary flex items-center justify-center">
+                      <span className="text-primary-foreground text-xs">✓</span>
+                    </div>
+                    <span className="text-sm text-foreground">{column}</span>
+                  </div>
+                ))}
+              </div>
             )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Próximo
-          </Button>
+          </div>
         </div>
       </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead className="bg-muted/50 border-t border-b border-border">
+            <tr>
+              <th className="text-left p-3 w-10">
+                <input type="checkbox" className="w-4 h-4 border border-input rounded cursor-pointer"/>
+              </th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Nº Fatura</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Cliente ↓</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Valor</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Vencimento</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Descrição</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataCobranca.map((item, index) => (
+              <tr key={index} className="border-b border-border hover:bg-muted/50 transition-colors">
+                <td className="p-4">
+                  <input type="checkbox" className="w-4 h-4 border border-input rounded cursor-pointer"/>
+                </td>
+                <td className="p-4">
+                  <span className="text-sm font-medium text-foreground">{item.numeroFatura}</span>
+                </td>
+                <td className="p-4">
+                  <div>
+                    <div className="text-sm font-medium text-foreground">{item.cliente}</div>
+                    <div className="text-sm text-muted-foreground">{item.email}</div>
+                  </div>
+                </td>
+                <td className="p-4">
+                  <span className="text-sm font-medium text-foreground">
+                    {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(item.valor)}
+                  </span>
+                </td>
+                <td className="p-4">
+                  <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                    item.status === 'pago' ? 'bg-green-100 text-green-800' :
+                    item.status === 'pendente' ? 'bg-yellow-100 text-yellow-800' :
+                    item.status === 'vencido' ? 'bg-red-100 text-red-800' :
+                    item.status === 'cancelado' ? 'bg-gray-100 text-gray-600' : ''
+                  }`}>
+                    {statusMap[item.status].label}
+                  </span>
+                </td>
+                <td className="p-4 text-sm text-foreground">{item.dataVencimento.toLocaleDateString("pt-BR")}</td>
+                <td className="p-4 text-sm text-foreground max-w-[200px] truncate">{item.descricao}</td>
+                <td className="p-4">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="text-muted-foreground hover:text-foreground p-1 transition-colors">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                      <DropdownMenuItem>
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        Adicionar em Cima
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        Adicionar em Baixo
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-destructive">
+                        Remover
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+
+      {/* Click outside to close dropdown */}
+      {showViewDropdown && (
+        <div 
+          className="fixed inset-0 z-0" 
+          onClick={() => setShowViewDropdown(false)}
+        />
+      )}
     </div>
   )
 }

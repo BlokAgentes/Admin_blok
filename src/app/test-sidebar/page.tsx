@@ -2,7 +2,7 @@ export default function TestSidebarPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Teste da Sidebar</h1>
+        <h1 className="text-3xl font-bold mb-2">Teste da Sidebar</h1>
         <p className="text-muted-foreground">
           Esta página testa se a sidebar está funcionando corretamente com o padrão shadcn/ui.
         </p>

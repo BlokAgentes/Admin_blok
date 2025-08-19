@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Client Flows Platform** - A Next.js 15.4.3 application for managing client workflows with JWT authentication, PostgreSQL/Prisma database, and interactive data visualization using React Flow.
+**Blok** - A Next.js 15.4.3 application for managing client workflows with JWT authentication, PostgreSQL/Prisma database, and interactive data visualization using React Flow.
 
 ## Quick Commands
 
@@ -46,6 +46,10 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - `npx prisma migrate status` - Check migration status
 - `npx prisma migrate reset --force` - Reset database and re-seed (dev only)
 
+**Verification Commands**
+- `npx tsc --noEmit` - Type check without building
+- `npm run vercel-build` - Vercel production build with Prisma generation
+
 **Command/Search Component Commands**
 - `npx shadcn@latest add command` - Add cmdk-based command component
 - `npx shadcn@latest add dialog` - Add dialog component for command palette
@@ -59,7 +63,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - Tailwind CSS 3.4.17 + shadcn/ui (new-york style)
 - JWT authentication with bcryptjs 3.0.2
 - React Hook Form 7.61.1 + Zod 4.0.8 validation
-- React Flow 11.11.4 for interactive diagrams
+- React Flow (reactflow) 11.11.4 for interactive diagrams
 - Recharts 3.1.0 for data visualization
 - Three.js 0.178.0 + @react-three/fiber 9.3.0 for 3D visualizations
 - Framer Motion 12.23.9 for animations
@@ -265,6 +269,8 @@ src/
 
 **Performance Optimizations**
 - Turbopack enabled for development (`next dev --turbopack`)
+- Build errors temporarily ignored in development (`ignoreBuildErrors: true`)
+- ESLint errors ignored during builds (`ignoreDuringBuilds: true`)  
 - Server components for initial render optimization
 - Client components only for interactive features
 - Lazy loading for 3D components and heavy visualizations
@@ -313,15 +319,17 @@ This project includes comprehensive Task Master AI integration via `.rules` file
 - `.cursor/mcp.json` - MCP server configuration for Claude Code with task-master-ai, fetch, and browser servers
 - `.taskmaster/` - Task Master project files and configuration
 - `.rules` - Comprehensive guide for Task Master CLI and MCP usage
-- `stagewise.json` - Project configuration file (port 3100, appPort 3000)
 - `components.json` - shadcn/ui configuration (new-york style, neutral base color)
-- `next.config.ts` - Next.js configuration (basic setup)
+- `next.config.ts` - Next.js configuration with build error ignoring for development
+- `tsconfig.json` - TypeScript configuration with strict mode and path aliases
+- `.cursor/rules/` - Cursor-specific rules for code patterns and practices
 
 **Workflow Integration**
 - Use Task Master for project planning and task breakdown
 - Track implementation progress with subtask updates
 - Leverage research mode for complex technical decisions
 - Maintain development context across multiple Claude sessions
+- Task Master configured for Portuguese language responses (can be changed via `task-master response-language` command)
 
 ## Important Instruction Reminders
 Do what has been asked; nothing more, nothing less.
@@ -349,3 +357,7 @@ When making schema changes:
 3. Test migration with `node test-migration-success.js`
 4. Update any affected API routes and components
 5. Run `npx prisma generate` to update Prisma client
+
+## Task Master AI Instructions
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md

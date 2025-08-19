@@ -1,8 +1,11 @@
 {
 	"mcpServers": {
 		"browser": {
+			"type": "stdio",
 			"command": "npx",
-			"args": ["@browsermcp/mcp"],
+			"args": [
+				"@browsermcp/mcp"
+			],
 			"env": {}
 		},
 		"task-master-ai": {

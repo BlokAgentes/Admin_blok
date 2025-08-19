@@ -1246,7 +1246,7 @@ function ContaPageContent() {
           <div className="flex-1 space-y-6">
             {/* Cabeçalho da Seção */}
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">{getSectionTitle()}</h1>
+              <h1 className="text-3xl font-bold tracking-tight mb-2">{getSectionTitle()}</h1>
               <p className="text-muted-foreground">
                 {getSectionDescription()}
               </p>

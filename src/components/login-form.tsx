@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { TypingText } from "@/components/ui/typing-text"
 import Silk from "@/components/login/Silk"
 import { Loader2 } from 'lucide-react'
 
@@ -61,10 +62,15 @@ export function LoginForm({
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold text-black">Bem-vindo de volta</h1>
-                <p className="text-balance text-black">
-                  Entre com suas credenciais para acessar a plataforma
-                </p>
+                <h1 className="text-2xl font-bold text-foreground mb-2">
+                  <TypingText 
+                    text="Bem-vindo de volta" 
+                    speed={80}
+                    showCursor={false}
+                    startOnView={true}
+                    once={true}
+                  />
+                </h1>
               </div>
               
               {error && (
@@ -74,7 +80,7 @@ export function LoginForm({
               )}
               
               <div className="grid gap-2">
-                <Label htmlFor="email" className="text-black">Email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -87,10 +93,10 @@ export function LoginForm({
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password" className="text-black">Senha</Label>
+                  <Label htmlFor="password">Senha</Label>
                   <a
                     href="#"
-                    className="ml-auto text-sm text-black underline-offset-2 hover:underline"
+                    className="ml-auto text-sm text-muted-foreground underline-offset-2 hover:underline"
                   >
                     Esqueceu sua senha?
                   </a>
@@ -110,7 +116,7 @@ export function LoginForm({
                 Entrar
               </Button>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                <span className="relative z-10 bg-background px-2 text-black">
+                <span className="relative z-10 bg-background px-2 text-muted-foreground">
                   Ou continue com
                 </span>
               </div>
@@ -143,9 +149,9 @@ export function LoginForm({
                   <span className="sr-only">Login with Meta</span>
                 </Button>
               </div>
-              <div className="text-center text-sm text-black">
+              <div className="text-center text-sm text-muted-foreground">
                 Não tem uma conta?{" "}
-                <a href="/register" className="text-black underline underline-offset-4">
+                <a href="/register" className="text-foreground underline underline-offset-4">
                   Registre-se
                 </a>
               </div>
@@ -162,9 +168,9 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-black [&_a]:text-black [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-black">
-        Ao clicar em continuar, você concorda com nossos <a href="#" className="text-black">Termos de Serviço</a>{" "}
-        e <a href="#" className="text-black">Política de Privacidade</a>.
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:text-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-foreground">
+        Ao clicar em continuar, você concorda com nossos <a href="#">Termos de Serviço</a>{" "}
+        e <a href="#">Política de Privacidade</a>.
       </div>
     </div>
   )

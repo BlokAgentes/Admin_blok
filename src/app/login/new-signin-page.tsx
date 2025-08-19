@@ -1,6 +1,7 @@
 'use client';
 
 import { SignInPage } from '@/components/ui/sign-in';
+import { TypingText } from '@/components/ui/typing-text';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -82,8 +83,17 @@ export default function NewLoginPage() {
 
   return (
     <SignInPage
-      title={<span className="font-light text-white tracking-tighter">Bem-vindo de volta</span>}
-      description="Entre com suas credenciais para acessar a plataforma"
+      title={
+        <TypingText 
+          text="Bem-vindo de volta" 
+          className="font-light text-white tracking-tighter"
+          speed={80}
+          showCursor={false}
+          startOnView={true}
+          once={true}
+        />
+      }
+      description=""
       heroImageSrc="/Imagem_login.png"
       onSignIn={handleSignIn}
       onGoogleSignIn={handleGoogleSignIn}

@@ -9,7 +9,7 @@
         "testStrategy": "1. Criar testes unitários usando Jest ou Mocha para verificar se o cliente Supabase é inicializado corretamente\n2. Implementar teste de integração que verifica a conexão real com o Supabase\n3. Testar cenários de falha (credenciais inválidas, servidor indisponível)\n4. Verificar se as variáveis de ambiente são carregadas corretamente\n5. Validar que o token de API tem as permissões necessárias executando uma query simples",
         "priority": "high",
         "dependencies": [],
-        "status": "done",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -652,7 +652,7 @@
             "id": 9,
             "title": "Integrar sistema de auditoria com Taskmaster MCP",
             "description": "Integrar o sistema de logs de auditoria com o módulo principal do Taskmaster.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
             "details": "",
             "testStrategy": ""
@@ -893,7 +893,7 @@
     ],
     "metadata": {
       "created": "2025-07-24T19:41:12.971Z",
-      "updated": "2025-08-05T23:11:07.976Z",
+      "updated": "2025-08-19T16:47:39.449Z",
       "description": "Tasks for master context"
     }
   }
