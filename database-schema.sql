@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     senha_hash VARCHAR(255),
     telefone VARCHAR(20),
     data_nascimento DATE,
+    workflow_id VARCHAR(255),
     ativo BOOLEAN DEFAULT true,
     tipo_usuario VARCHAR(50) DEFAULT 'usuario' CHECK (tipo_usuario IN ('admin', 'usuario', 'moderador')),
     criado_em TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -140,6 +141,7 @@ CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
 CREATE INDEX IF NOT EXISTS idx_usuarios_nome ON usuarios(nome);
 CREATE INDEX IF NOT EXISTS idx_usuarios_tipo ON usuarios(tipo_usuario);
 CREATE INDEX IF NOT EXISTS idx_usuarios_ativo ON usuarios(ativo);
+CREATE INDEX IF NOT EXISTS idx_usuarios_workflow_id ON usuarios(workflow_id);
 CREATE INDEX IF NOT EXISTS idx_usuarios_criado_em ON usuarios(criado_em);
 
 -- Índices para tabela perfis
@@ -286,7 +288,8 @@ COMMENT ON TABLE logs_atividade IS 'Log de todas as atividades do sistema';
 COMMENT ON TABLE sessoes IS 'Sessões ativas dos usuários';
 
 COMMENT ON COLUMN usuarios.tipo_usuario IS 'Tipo de usuário: admin, usuario, moderador';
+COMMENT ON COLUMN usuarios.workflow_id IS 'ID do workflow do n8n associado à conta do usuário';
 COMMENT ON COLUMN itens.status IS 'Status do item: ativo, inativo, arquivado, pendente';
 COMMENT ON COLUMN itens.prioridade IS 'Prioridade: baixa, media, alta, urgente';
 COMMENT ON COLUMN itens.tags IS 'Array de tags para categorização';
-COMMENT ON COLUMN itens.metadata IS 'Dados adicionais em formato JSON'; 
+COMMENT ON COLUMN itens.metadata IS 'Dados adicionais em formato JSON';

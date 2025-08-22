@@ -142,4 +142,4 @@ export const Logo = () => {
 - **Página de Teste**: `http://localhost:3000/test-sidebar-demo`
 - **Documentação Motion**: https://motion.dev/
 - **Tabler Icons**: https://tabler-icons.io/
-- **shadcn/ui**: https://ui.shadcn.com/ 
+- **shadcn/ui**: https://ui.shadcn.com/

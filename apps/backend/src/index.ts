@@ -2,13 +2,21 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true
+}));
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,13 +30,16 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes placeholder
+// API routes
 app.get('/api', (req, res) => {
   res.json({ 
     message: 'Blok Platform API - v1.0.0',
     docs: '/api/docs' 
   });
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

@@ -1,6 +1,6 @@
-# Plataforma de Fluxos de Clientes
+# Blok Platform
 
-Uma plataforma moderna para expor e gerenciar fluxos de trabalho dos clientes, construída com Next.js 14, TypeScript, Tailwind CSS e Prisma.
+Uma plataforma moderna de gerenciamento de fluxos de clientes, construída como monorepo pnpm com Next.js 15, TypeScript, Tailwind CSS e Prisma.
 
 ## 🚀 Funcionalidades
 
@@ -14,9 +14,9 @@ Uma plataforma moderna para expor e gerenciar fluxos de trabalho dos clientes, c
 
 ## 🛠️ Tecnologias
 
-- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15.4.3, TypeScript, Tailwind CSS
 - **UI Components**: shadcn/ui
-- **Backend**: Next.js API Routes
+- **Backend**: Express.js + Next.js API Routes (monorepo)
 - **Database**: PostgreSQL com Prisma ORM
 - **Autenticação**: JWT
 - **Diagramas**: React Flow
@@ -25,7 +25,7 @@ Uma plataforma moderna para expor e gerenciar fluxos de trabalho dos clientes, c
 ## 📋 Pré-requisitos
 
 - Node.js 18+ 
-- npm ou yarn
+- pnpm (gerenciador de pacotes)
 - PostgreSQL (local ou Supabase)
 
 ## 🔧 Instalação
@@ -33,12 +33,12 @@ Uma plataforma moderna para expor e gerenciar fluxos de trabalho dos clientes, c
 1. **Clone o repositório**
    ```bash
    git clone <repository-url>
-   cd client-flows-platform
+   cd blok-platform
    ```
 
 2. **Instale as dependências**
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Configure as variáveis de ambiente**
@@ -64,19 +64,24 @@ Uma plataforma moderna para expor e gerenciar fluxos de trabalho dos clientes, c
 
 4. **Configure o banco de dados**
    ```bash
-   # Gere o cliente Prisma
-   npx prisma generate
+   # Gere o cliente Prisma (no frontend)
+   cd apps/frontend && npx prisma generate
    
    # Execute as migrações
-   npx prisma migrate dev --name init
+   cd apps/frontend && npx prisma migrate dev --name init
    
    # (Opcional) Popule com dados de exemplo
-   npx prisma db seed
+   cd apps/frontend && npx prisma db seed
    ```
 
 5. **Inicie o servidor de desenvolvimento**
-```bash
-npm run dev
+   ```bash
+   # Inicia frontend e backend em paralelo
+   pnpm dev
+   
+   # OU inicie separadamente:
+   pnpm dev:frontend  # localhost:3000
+   pnpm dev:backend   # localhost:5000
    ```
 
 6. **Acesse a aplicação**
@@ -84,26 +89,38 @@ npm run dev
    http://localhost:3000
    ```
 
-## 📁 Estrutura do Projeto
+## 📁 Estrutura do Projeto (Monorepo)
 
 ```
-src/
-├── app/                    # Next.js App Router
-│   ├── (auth)/            # Rotas de autenticação
-│   ├── (dashboard)/       # Rotas do dashboard
-│   ├── api/               # API routes
-│   └── globals.css        # Estilos globais
-├── components/            # Componentes reutilizáveis
-│   ├── ui/               # shadcn/ui components
-│   ├── forms/            # Formulários
-│   ├── dashboard/        # Componentes do dashboard
-│   └── charts/           # Gráficos e visualizações
-├── lib/                  # Utilitários e configurações
-│   ├── prisma.ts         # Cliente Prisma
-│   ├── auth.ts           # Utilitários de autenticação
-│   └── utils.ts          # Utilitários gerais
-└── prisma/               # Schema e migrações
-    └── schema.prisma     # Schema do banco de dados
+├── apps/
+│   ├── frontend/              # Next.js 15.4.3 application
+│   │   ├── src/
+│   │   │   ├── app/          # Next.js App Router
+│   │   │   │   ├── admin/    # Admin panel routes
+│   │   │   │   ├── api/      # API routes
+│   │   │   │   └── ...       # Other routes
+│   │   │   ├── components/   # React components
+│   │   │   │   ├── ui/       # shadcn/ui components
+│   │   │   │   ├── forms/    # Formulários
+│   │   │   │   └── ...       # Other components
+│   │   │   ├── contexts/     # React contexts
+│   │   │   ├── hooks/        # Custom hooks
+│   │   │   └── lib/          # Utilities
+│   │   ├── prisma/          # Database schema
+│   │   └── package.json
+│   ├── backend/              # Express.js API service
+│   │   ├── src/
+│   │   │   ├── index.ts     # Server entry point
+│   │   │   ├── routes/      # API routes
+│   │   │   ├── middleware/  # Express middleware
+│   │   │   └── lib/         # Backend utilities
+│   │   └── package.json
+│   └── cursor/              # Cursor-specific files
+├── packages/                # Shared packages (future use)
+├── postgresql-mcp-server/   # PostgreSQL MCP server
+├── package.json            # Root package.json
+├── pnpm-workspace.yaml     # pnpm workspace config
+└── CLAUDE.md              # Project instructions
 ```
 
 ## 🗄️ Modelos do Banco de Dados
