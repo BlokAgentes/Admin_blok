@@ -16,7 +16,11 @@
     "lint": "pnpm --recursive run lint",
     "start": "pnpm --parallel --filter \"./apps/*\" run start",
     "clean": "pnpm --recursive run clean",
-    "test": "pnpm --recursive run test"
+    "test": "pnpm --recursive run test",
+    "supabase:configure": "node configure-supabase.js",
+    "supabase:setup": "node setup-supabase-schema.js",
+    "supabase:validate": "node validate-supabase-schema.js",
+    "supabase:migrate": "node migrate-to-supabase.js"
   },
   "devDependencies": {
     "typescript": "^5"

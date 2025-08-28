@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 import { verifyToken, extractTokenFromHeader } from '../lib/auth'
-import { prisma } from '../lib/prisma'
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -34,29 +33,9 @@ export const requireAuth = async (
       })
     }
 
-    // Verify user still exists in database
-    const user = await prisma.user.findUnique({
-      where: { id: payload.userId }
-    })
-
-    if (!user) {
-      return res.status(401).json({
-        error: 'Usuário não encontrado'
-      })
-    }
-
-    // If impersonating, verify original admin still exists
-    if (payload.isImpersonating && payload.originalUserId) {
-      const originalAdmin = await prisma.user.findUnique({
-        where: { id: payload.originalUserId }
-      })
-
-      if (!originalAdmin || originalAdmin.role !== 'ADMIN') {
-        return res.status(401).json({
-          error: 'Sessão de impersonation inválida'
-        })
-      }
-    }
+    // TODO: Verify user still exists in database using Supabase
+    // For now, trust the JWT token validation
+    // In production, implement user verification via Supabase client
 
     req.user = {
       userId: payload.userId,

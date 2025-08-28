@@ -1,446 +1,279 @@
 import { Router } from 'express'
-import { prisma } from '../lib/prisma'
+import { authService } from '../mcp/simple-auth-service'
 import { 
-  hashPassword, 
-  comparePassword, 
-  generateToken, 
-  generateImpersonationToken,
-  generateStopImpersonationToken
-} from '../lib/auth'
-import { requireAuth, requireRole, requireOriginalAdmin, AuthenticatedRequest } from '../middleware/auth'
+  requireMCPAuth, 
+  requireMCPAdmin, 
+  MCPAuthenticatedRequest,
+  authRateLimit,
+  passwordResetRateLimit,
+  logAuthEvent,
+  validateMCPSession,
+  sanitizeInputs
+} from '../middleware/mcp-auth'
 import { validateBody } from '../middleware/validation'
-import { loginSchema, registerSchema, impersonateSchema } from '../schemas/auth'
+import { loginSchema, registerSchema } from '../schemas/auth'
 
 const router = Router()
 
-// Login para clientes
-router.post('/login', validateBody(loginSchema), async (req, res) => {
-  try {
-    const { email, password } = req.body
-
-    // Buscar usuário
-    const user = await prisma.user.findUnique({
-      where: { email }
-    })
-
-    if (!user) {
-      return res.status(401).json({
-        error: 'Credenciais inválidas'
-      })
-    }
-
-    // Verificar senha
-    const isValidPassword = await comparePassword(password, user.password)
-    
-    if (!isValidPassword) {
-      return res.status(401).json({
-        error: 'Credenciais inválidas'
-      })
-    }
-
-    // Gerar token JWT
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role as 'ADMIN' | 'CLIENT'
-    })
-
-    // Remover senha do retorno
-    const { password: _, ...userWithoutPassword } = user
-
-    // Log de auditoria
-    await prisma.auditLog.create({
-      data: {
-        action: 'LOGIN',
-        resource: 'USER',
-        resourceId: user.id,
-        details: { email: user.email, role: user.role },
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
-        userId: user.id
-      }
-    })
-
-    return res.json({
-      user: userWithoutPassword,
-      token
-    })
-  } catch (error) {
-    console.error('Login error:', error)
-    return res.status(500).json({
-      error: 'Erro interno do servidor'
-    })
-  }
-})
-
-// Login específico para admins
-router.post('/admin/login', validateBody(loginSchema), async (req, res) => {
-  try {
-    const { email, password } = req.body
-
-    // Buscar usuário admin
-    const user = await prisma.user.findUnique({
-      where: { email, role: 'ADMIN' }
-    })
-
-    if (!user) {
-      return res.status(401).json({
-        error: 'Credenciais de administrador inválidas'
-      })
-    }
-
-    // Verificar senha
-    const isValidPassword = await comparePassword(password, user.password)
-    
-    if (!isValidPassword) {
-      return res.status(401).json({
-        error: 'Credenciais de administrador inválidas'
-      })
-    }
-
-    // Gerar token JWT
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role as 'ADMIN'
-    })
-
-    // Remover senha do retorno
-    const { password: _, ...userWithoutPassword } = user
-
-    // Log de auditoria
-    await prisma.auditLog.create({
-      data: {
-        action: 'ADMIN_LOGIN',
-        resource: 'USER',
-        resourceId: user.id,
-        details: { email: user.email, role: user.role },
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
-        userId: user.id
-      }
-    })
-
-    return res.json({
-      user: userWithoutPassword,
-      token
-    })
-  } catch (error) {
-    console.error('Admin login error:', error)
-    return res.status(500).json({
-      error: 'Erro interno do servidor'
-    })
-  }
-})
-
-// Registro de novos usuários
-router.post('/register', validateBody(registerSchema), async (req, res) => {
-  try {
-    const { email, name, password, role } = req.body
-
-    // Verificar se usuário já existe
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    })
-
-    if (existingUser) {
-      return res.status(400).json({
-        error: 'Email já está em uso'
-      })
-    }
-
-    // Hash da senha
-    const hashedPassword = await hashPassword(password)
-
-    // Criar usuário
-    const user = await prisma.user.create({
-      data: {
-        email,
-        name,
-        password: hashedPassword,
-        role: role as 'ADMIN' | 'CLIENT'
-      }
-    })
-
-    // Gerar token JWT
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role as 'ADMIN' | 'CLIENT'
-    })
-
-    // Remover senha do retorno
-    const { password: _, ...userWithoutPassword } = user
-
-    // Log de auditoria
-    await prisma.auditLog.create({
-      data: {
-        action: 'REGISTER',
-        resource: 'USER',
-        resourceId: user.id,
-        details: { email: user.email, role: user.role },
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
-        userId: user.id
-      }
-    })
-
-    return res.status(201).json({
-      user: userWithoutPassword,
-      token
-    })
-  } catch (error) {
-    console.error('Register error:', error)
-    return res.status(500).json({
-      error: 'Erro interno do servidor'
-    })
-  }
-})
-
-// Impersonation - Admin logar como cliente
-router.post('/admin/impersonate', 
-  requireAuth,
-  requireOriginalAdmin,
-  validateBody(impersonateSchema),
-  async (req: AuthenticatedRequest, res) => {
+// Register new user using MCP Supabase Auth
+router.post('/register', 
+  authRateLimit,
+  sanitizeInputs,
+  validateBody(registerSchema),
+  logAuthEvent('REGISTER'),
+  async (req, res) => {
     try {
-      const { clientEmail } = req.body
-      
-      // Buscar cliente
-      const client = await prisma.user.findUnique({
-        where: { email: clientEmail, role: 'CLIENT' }
-      })
+      const { email, password, name, role = 'CLIENT' } = req.body
 
-      if (!client) {
-        return res.status(404).json({
-          error: 'Cliente não encontrado'
+      const result = await authService.register(email, password, name, role)
+
+      if (!result.success) {
+        return res.status(400).json({
+          error: result.error || 'Registration failed'
         })
       }
 
-      // Buscar dados do admin original
-      const admin = await prisma.user.findUnique({
-        where: { id: req.user!.userId }
+      // Return session token for immediate login
+      return res.status(201).json({
+        message: 'User registered successfully',
+        user: result.data?.user,
+        session: result.data?.session
       })
+    } catch (error) {
+      console.error('Registration error:', error)
+      return res.status(500).json({
+        error: 'Internal server error'
+      })
+    }
+  }
+)
 
-      if (!admin) {
-        return res.status(404).json({
-          error: 'Administrador não encontrado'
+// Login user using MCP Supabase Auth
+router.post('/login', 
+  authRateLimit,
+  sanitizeInputs,
+  validateBody(loginSchema),
+  logAuthEvent('LOGIN'),
+  async (req, res) => {
+    try {
+      const { email, password } = req.body
+
+      const result = await authService.login(email, password)
+
+      if (!result.success) {
+        return res.status(401).json({
+          error: result.error || 'Invalid credentials'
         })
       }
 
-      // Gerar token de impersonation
-      const token = generateImpersonationToken(
-        { id: admin.id, email: admin.email, role: 'ADMIN' },
-        { id: client.id, email: client.email, role: 'CLIENT' }
+      return res.json({
+        message: 'Login successful',
+        user: result.data?.user,
+        session: result.data?.session
+      })
+    } catch (error) {
+      console.error('Login error:', error)
+      return res.status(500).json({
+        error: 'Internal server error'
+      })
+    }
+  }
+)
+
+// Admin login (uses same MCP login but validates admin role)
+router.post('/admin/login', 
+  authRateLimit,
+  validateBody(loginSchema),
+  logAuthEvent('ADMIN_LOGIN'),
+  async (req, res) => {
+    try {
+      const { email, password } = req.body
+
+      const result = await authService.login(email, password)
+
+      if (!result.success) {
+        return res.status(401).json({
+          error: 'Invalid admin credentials'
+        })
+      }
+
+      // Verify admin role
+      if (result.data?.user.role !== 'ADMIN') {
+        return res.status(403).json({
+          error: 'Access denied. Admin privileges required.'
+        })
+      }
+
+      return res.json({
+        message: 'Admin login successful',
+        user: result.data?.user,
+        session: result.data?.session
+      })
+    } catch (error) {
+      console.error('Admin login error:', error)
+      return res.status(500).json({
+        error: 'Internal server error'
+      })
+    }
+  }
+)
+
+// Logout user from Supabase
+router.post('/logout', 
+  requireMCPAuth,
+  logAuthEvent('LOGOUT'),
+  async (req: MCPAuthenticatedRequest, res) => {
+    try {
+      const result = await authService.logout('local')
+
+      if (!result.success) {
+        return res.status(400).json({
+          error: result.error || 'Logout failed'
+        })
+      }
+
+      return res.json({
+        message: 'Logout successful'
+      })
+    } catch (error) {
+      console.error('Logout error:', error)
+      return res.status(500).json({
+        error: 'Internal server error'
+      })
+    }
+  }
+)
+
+// Password reset request
+router.post('/forgot-password',
+  passwordResetRateLimit,
+  async (req, res) => {
+    try {
+      const { email } = req.body
+
+      if (!email) {
+        return res.status(400).json({
+          error: 'Email is required'
+        })
+      }
+
+      const result = await authService.resetPassword(
+        email,
+        process.env.FRONTEND_URL + '/auth/reset-password'
       )
 
-      // Remover senhas do retorno
-      const { password: _clientPass, ...clientWithoutPassword } = client
-      const { password: _adminPass, ...adminWithoutPassword } = admin
-
-      // Log de auditoria
-      await prisma.auditLog.create({
-        data: {
-          action: 'IMPERSONATE_START',
-          resource: 'USER',
-          resourceId: client.id,
-          details: { 
-            adminId: admin.id,
-            adminEmail: admin.email,
-            clientId: client.id,
-            clientEmail: client.email
-          },
-          ipAddress: req.ip,
-          userAgent: req.get('User-Agent'),
-          userId: admin.id
-        }
-      })
-
+      // Always return success for security (don't reveal if email exists)
       return res.json({
-        user: clientWithoutPassword,
-        token,
-        isImpersonating: true,
-        originalUser: adminWithoutPassword
+        message: 'Password reset email sent if account exists'
       })
     } catch (error) {
-      console.error('Impersonation error:', error)
+      console.error('Password reset error:', error)
       return res.status(500).json({
-        error: 'Erro interno do servidor'
+        error: 'Internal server error'
       })
     }
   }
 )
 
-// Parar impersonation - Voltar para conta admin
-router.post('/admin/stop-impersonation',
-  requireAuth,
-  async (req: AuthenticatedRequest, res) => {
+// Confirm email verification
+router.post('/confirm-email',
+  async (req, res) => {
     try {
-      if (!req.user?.isImpersonating || !req.user?.originalUserId) {
+      const { token, type = 'signup' } = req.body
+
+      if (!token) {
         return res.status(400).json({
-          error: 'Não há sessão de impersonation ativa'
+          error: 'Confirmation token is required'
         })
       }
 
-      // Buscar dados do admin original
-      const admin = await prisma.user.findUnique({
-        where: { id: req.user.originalUserId }
-      })
+      const result = await authService.confirmEmail(token, type)
 
-      if (!admin) {
-        return res.status(404).json({
-          error: 'Administrador original não encontrado'
+      if (!result.success) {
+        return res.status(400).json({
+          error: result.error || 'Email confirmation failed'
         })
       }
-
-      // Gerar token normal do admin
-      const token = generateStopImpersonationToken({
-        id: admin.id,
-        email: admin.email,
-        role: 'ADMIN'
-      })
-
-      // Remover senha do retorno
-      const { password: _, ...adminWithoutPassword } = admin
-
-      // Log de auditoria
-      await prisma.auditLog.create({
-        data: {
-          action: 'IMPERSONATE_STOP',
-          resource: 'USER',
-          resourceId: req.user.userId,
-          details: { 
-            adminId: admin.id,
-            adminEmail: admin.email,
-            clientId: req.user.userId,
-            clientEmail: req.user.email
-          },
-          ipAddress: req.ip,
-          userAgent: req.get('User-Agent'),
-          userId: admin.id
-        }
-      })
 
       return res.json({
-        user: adminWithoutPassword,
-        token,
-        isImpersonating: false
+        message: 'Email confirmed successfully',
+        user: result.data?.user,
+        session: result.data?.session
       })
     } catch (error) {
-      console.error('Stop impersonation error:', error)
+      console.error('Email confirmation error:', error)
       return res.status(500).json({
-        error: 'Erro interno do servidor'
+        error: 'Internal server error'
       })
     }
   }
 )
 
-// Verificar usuário logado
-router.get('/me', requireAuth, async (req: AuthenticatedRequest, res) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user!.userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
-
-    if (!user) {
-      return res.status(404).json({
-        error: 'Usuário não encontrado'
-      })
-    }
-
-    // Se estiver impersonando, incluir dados do admin original
-    let originalUser = null
-    if (req.user?.isImpersonating && req.user?.originalUserId) {
-      originalUser = await prisma.user.findUnique({
-        where: { id: req.user.originalUserId },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          createdAt: true,
-          updatedAt: true
-        }
-      })
-    }
-
-    return res.json({
-      user,
-      isImpersonating: req.user?.isImpersonating || false,
-      originalUser
-    })
-  } catch (error) {
-    console.error('Get user error:', error)
-    return res.status(500).json({
-      error: 'Erro interno do servidor'
-    })
-  }
-})
-
-// Listar clientes (para admins escolherem quem impersonar)
-router.get('/admin/clients',
-  requireAuth,
-  requireRole(['ADMIN']),
-  async (req: AuthenticatedRequest, res) => {
+// Refresh session token
+router.post('/refresh',
+  async (req, res) => {
     try {
-      const page = parseInt(req.query.page as string) || 1
-      const limit = parseInt(req.query.limit as string) || 10
-      const search = req.query.search as string || ''
+      const { refresh_token } = req.body
 
-      const skip = (page - 1) * limit
+      const result = await authService.refreshSession(refresh_token)
 
-      const where = {
-        role: 'CLIENT' as const,
-        ...(search && {
-          OR: [
-            { email: { contains: search, mode: 'insensitive' as const } },
-            { name: { contains: search, mode: 'insensitive' as const } }
-          ]
+      if (!result.success) {
+        return res.status(401).json({
+          error: result.error || 'Token refresh failed'
         })
       }
 
-      const [clients, total] = await Promise.all([
-        prisma.user.findMany({
-          where,
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            role: true,
-            createdAt: true,
-            updatedAt: true
-          },
-          skip,
-          take: limit,
-          orderBy: { createdAt: 'desc' }
-        }),
-        prisma.user.count({ where })
-      ])
-
       return res.json({
-        clients,
-        pagination: {
-          page,
-          limit,
-          total,
-          pages: Math.ceil(total / limit)
-        }
+        message: 'Session refreshed successfully',
+        session: result.data?.session,
+        user: result.data?.user
       })
     } catch (error) {
-      console.error('Get clients error:', error)
+      console.error('Token refresh error:', error)
       return res.status(500).json({
-        error: 'Erro interno do servidor'
+        error: 'Internal server error'
       })
     }
   }
 )
+
+// TODO: Implement impersonation feature in future version
+// For now, admin can access user data via the admin endpoints
+
+// Get current user profile
+router.get('/me', 
+  requireMCPAuth,
+  validateMCPSession,
+  async (req: MCPAuthenticatedRequest, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          error: 'Authentication required'
+        })
+      }
+
+      return res.json({
+        user: {
+          id: req.user.userId,
+          email: req.user.email,
+          name: req.user.name,
+          role: req.user.role
+        },
+        session: req.supabaseSession,
+        isImpersonating: req.user.isImpersonating || false
+      })
+    } catch (error) {
+      console.error('Get user error:', error)
+      return res.status(500).json({
+        error: 'Internal server error'
+      })
+    }
+  }
+)
+
+// TODO: List clients for admin - needs to be reimplemented with Supabase
+// router.get('/admin/clients', requireMCPAuth, requireMCPAdmin, async (req, res) => {
+//   // Implementation needed using Supabase direct queries or MCP service
+// })
 
 export default router

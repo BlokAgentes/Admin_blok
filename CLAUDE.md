@@ -29,21 +29,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `cd apps/backend && pnpm start` - Start production backend
 - `cd apps/backend && pnpm test` - Run backend tests
 
-**Database** (from apps/frontend/)
-- `cd apps/frontend && npx prisma migrate dev` - Run migrations
-- `cd apps/frontend && npx prisma generate` - Generate Prisma client
-- `cd apps/frontend && npx prisma studio` - Open database browser
-- `cd apps/frontend && npx prisma db seed` - Seed database
-- `cd apps/frontend && npx prisma db push` - Push schema changes
-- `cd apps/frontend && npx prisma migrate reset` - Reset database
+**Database** (Supabase only)
+- Database operations handled through Supabase dashboard or CLI
+- Use Supabase MCP server for database management via Claude Code
+- Authentication and user management via Supabase Auth
 
 **Environment**
 ```bash
+# Database Configuration
 DATABASE_URL="postgresql://user:password@localhost:5432/client_flows_db"
+
+# Authentication & Security
 JWT_SECRET="your-jwt-secret"
 NEXTAUTH_SECRET="your-nextauth-secret"
 NEXTAUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# Supabase Configuration
+SUPABASE_URL="your-supabase-url"
+SUPABASE_ANON_KEY="your-supabase-anon-key"
+SUPABASE_ACCESS_TOKEN="your-supabase-access-token"
+SUPABASE_PROJECT_REF="your-project-ref"
 
 # AI API Keys (for Task Master and integrations)
 ANTHROPIC_API_KEY="sk-ant-api03-..."
@@ -51,18 +57,27 @@ PERPLEXITY_API_KEY="pplx-..."
 OPENAI_API_KEY="sk-proj-..."
 GOOGLE_API_KEY="..."
 GITHUB_API_KEY="ghp_..."
+
+# Backend Security (Optional - Defaults Provided)
+RATE_LIMIT_ENABLED="true"
+RATE_LIMIT_WINDOW_MS="900000"
+RATE_LIMIT_MAX_REQUESTS="100"
+CORS_ORIGINS="http://localhost:3000,http://localhost:3001"
 ```
 
 **Additional Testing Commands**
 - `pnpm test` - Run test suite (if configured)
-- `npx prisma db pull` - Pull database schema changes (from apps/frontend/)
-- `npx prisma db seed` - Seed database with initial data (from apps/frontend/)
-- `npx prisma migrate status` - Check migration status (from apps/frontend/)
-- `npx prisma migrate reset --force` - Reset database and re-seed (dev only, from apps/frontend/)
+- Use Supabase dashboard or CLI for database operations
+
+**Supabase Integration Commands** (from root)
+- `pnpm supabase:configure` - Configure Supabase connection
+- `pnpm supabase:setup` - Setup Supabase schema
+- `pnpm supabase:validate` - Validate Supabase schema
+- `pnpm supabase:migrate` - Migrate to Supabase
 
 **Verification Commands**
 - `cd apps/frontend && npx tsc --noEmit` - Type check without building
-- `cd apps/frontend && pnpm vercel-build` - Vercel production build with Prisma generation
+- `cd apps/frontend && pnpm vercel-build` - Vercel production build
 
 **Component Management Commands**
 - `cd apps/frontend && npx shadcn@latest add [component]` - Add shadcn/ui components
@@ -81,7 +96,7 @@ GITHUB_API_KEY="ghp_..."
 
 **Frontend Tech Stack**
 - Next.js 15.4.3 + React 19.1.0 + TypeScript 5.9.2
-- PostgreSQL + Prisma ORM 6.12.0
+- Supabase 2.53.0 for database and authentication
 - Tailwind CSS 3.4.17 + shadcn/ui (new-york style)
 - JWT authentication with bcryptjs 3.0.2
 - React Hook Form 7.61.1 + Zod 4.0.8 validation
@@ -90,7 +105,6 @@ GITHUB_API_KEY="ghp_..."
 - Three.js 0.178.0 + @react-three/fiber 9.3.0 for 3D visualizations
 - Framer Motion 12.23.9 for animations
 - Sonner 2.0.6 for toast notifications
-- Supabase 2.53.0 for database management
 - Tanstack Table 8.21.3 for data tables
 - Tabler Icons 3.34.1 + Lucide React 0.525.0 for icons
 - next-themes 0.4.6 for theme switching
@@ -100,13 +114,18 @@ GITHUB_API_KEY="ghp_..."
 - CORS, Helmet, Morgan for middleware
 - ts-node-dev for development
 - Jest for testing framework
+- Comprehensive security configuration with rate limiting
+- MCP (Model Context Protocol) service integration
+- Supabase authentication and database integration
 
 **Core Architecture Patterns**
 - **Monorepo Organization**: Separate frontend and backend services with potential for shared packages
 - **Frontend**: Next.js 15.4.3 App Router with server components for initial load, client components for interactivity
-- **Backend**: Express.js API server with health checks and CORS support  
+- **Backend**: Express.js API server with comprehensive security, rate limiting, and MCP integration
 - **JWT Auth**: Tokens stored in localStorage, validated per API request via middleware (frontend implementation)
-- **Database Access**: Prisma client singleton pattern in `apps/frontend/src/lib/prisma.ts`
+- **Database Access**: Supabase for all database operations and authentication
+- **Security Architecture**: Multi-layered security with rate limiting, CORS, input sanitization, and CSP headers
+- **MCP Integration**: Model Context Protocol services for enhanced authentication and data access
 - **State Management**: Context-based (SidebarContext, BlurContext, CollapsibleContext, TabSyncContext) for UI state
 - **File Structure**: Feature-based organization with colocated components
 - **Responsive Design**: Mobile-first approach with `use-mobile` hook for breakpoint detection
@@ -163,15 +182,20 @@ GITHUB_API_KEY="ghp_..."
 - `crm/*` - CRM integration endpoints
 
 **Database & Configuration**
-- `prisma/schema.prisma` - Complete database schema
-- `src/lib/prisma.ts` - Prisma client singleton
 - `src/lib/supabase.ts` - Supabase client configuration
 - `src/lib/supabase-crud.ts` - Supabase CRUD operations helper
 - `components.json` - shadcn/ui configuration (new-york style)
 - `next.config.ts` - Next.js configuration with build error ignoring
 
 **Backend Application** (apps/backend/)
-- `src/index.ts` - Express server with health checks and basic API structure
+- `src/index.ts` - Express server with health checks and comprehensive API structure
+- `src/config/security.ts` - Security configuration with rate limiting, CORS, and input sanitization
+- `src/lib/auth.ts` - JWT authentication utilities
+- `src/middleware/` - Authentication, MCP auth, and validation middleware
+- `src/routes/` - Express route handlers (auth, profile)
+- `src/mcp/` - MCP service integrations for Supabase and authentication
+- `src/schemas/` - Request/response validation schemas
+- `src/types/` - TypeScript type definitions
 - `package.json` - Backend dependencies and scripts
 
 **PostgreSQL MCP Server** (postgresql-mcp-server/)
@@ -187,11 +211,8 @@ GITHUB_API_KEY="ghp_..."
 # Install dependencies for entire monorepo
 pnpm install
 
-# Generate Prisma client and run migrations (frontend only)
-cd apps/frontend
-npx prisma generate
-npx prisma migrate dev
-cd ../..
+# Configure Supabase connection
+pnpm supabase:configure
 ```
 
 **2. Feature Development**
@@ -201,15 +222,10 @@ cd ../..
 - Use React Hook Form + Zod for forms (frontend)
 - Add validation in both client and API routes
 
-**3. Database Changes** (Frontend only - Prisma in apps/frontend/)
-```bash
-cd apps/frontend
-# Edit prisma/schema.prisma
-npx prisma migrate dev --name descriptive-name
-# Update seed data if needed
-npx prisma db seed
-cd ../..
-```
+**3. Database Changes** (Supabase)
+- Use Supabase dashboard for schema changes
+- Use Supabase MCP server via Claude Code for database operations
+- Authentication handled by Supabase Auth
 
 **4. Component Creation** (Frontend)
 ```bash
@@ -324,13 +340,18 @@ cd apps/backend && pnpm test
 **Database Considerations**
 - Use Supabase for managed PostgreSQL
 - Set connection pooling for serverless
-- Configure proper indexes for performance
-- Database schema located in `apps/frontend/prisma/`
+- Configure proper indexes for performance via Supabase dashboard
+- Database schema managed through Supabase
 
 **System Requirements**
 - Node.js 18+ (specified in root package.json)
 - pnpm 8+ (specified in root package.json)
 - PostgreSQL database (local or cloud)
+
+**Development Dependencies**
+- Frontend: Next.js 15.4.3, React 19.1.0, TypeScript 5.9.2, Supabase 2.53.0
+- Backend: Express.js 4.18.2, TypeScript 5.x, Jest for testing  
+- Package Management: pnpm workspaces for monorepo structure
 
 **TypeScript Configuration**
 - Shared base config in `tsconfig.base.json`
@@ -372,8 +393,10 @@ cd apps/backend && pnpm test
 **Authentication Flow**
 - JWT tokens generated in `/api/auth/login` with 7-day expiry
 - Tokens stored in localStorage on client side
-- Middleware utilities in `src/lib/middleware.ts` provide `withAuth()` HOF for API route protection
+- Frontend: Middleware utilities in `src/lib/middleware.ts` provide `withAuth()` HOF for API route protection
+- Backend: Comprehensive authentication middleware with rate limiting and security validation
 - User data added to request headers: `x-user-id`, `x-user-email`, `x-user-role`
+- Dual authentication: Frontend JWT + Backend Supabase integration
 
 **Database Patterns**
 - All models use `cuid()` for primary keys
@@ -390,10 +413,12 @@ cd apps/backend && pnpm test
 - shadcn/ui new-york style with Tailwind CSS variables
 
 **API Route Structure**
-- Protected routes use `withAuth()` from middleware
-- Consistent error handling with appropriate HTTP status codes
+- **Frontend API Routes**: Protected routes use `withAuth()` from middleware
+- **Backend API Routes**: Comprehensive security with rate limiting, CORS, and input validation
+- Consistent error handling with appropriate HTTP status codes across both services
 - User ID extracted from JWT token headers
-- Request/response validation (implied by auth patterns)
+- Request/response validation via Zod schemas
+- MCP service integration for enhanced data access and authentication
 
 ## Task Master Integration
 
@@ -409,6 +434,7 @@ This project includes comprehensive Task Master AI integration via `.rules` file
 
 **Configuration Files**
 - `.taskmaster/` - Task Master project files and configuration
+- `.mcp.json` - MCP server configuration for Claude Code integration (Task Master AI, Browser, Supabase Auth)
 - `components.json` - shadcn/ui configuration (new-york style, neutral base color) in `apps/frontend/`
 - `next.config.ts` - Next.js configuration with build error ignoring for development in `apps/frontend/`
 - `tsconfig.json` - TypeScript configuration with strict mode and path aliases (per app)
@@ -431,10 +457,10 @@ NEVER proactively create documentation files (*.md) or README files. Only create
 ## Important Monorepo Notes
 - **This is a pnpm workspace** - always use `pnpm` instead of npm
 - **Frontend and backend are separate apps** - be mindful of the working directory
-- **Database operations are frontend-specific** - Prisma is only in `apps/frontend/`
+- **Database operations via Supabase** - All database operations handled through Supabase
 - **Use proper workspace commands** - `pnpm dev` starts both services, `pnpm dev:frontend` or `pnpm dev:backend` for individual services
 - **Path references matter** - when referencing files, be clear about which app you're working in
-- **Backend has duplicate Prisma setup** - Note that `apps/backend/prisma/` exists but database operations should use `apps/frontend/prisma/`
+- **Authentication via Supabase** - User authentication and management handled by Supabase Auth
 - **Recent monorepo transformation** - Project was recently converted from single app to monorepo structure
 
 ## Critical Security Guidelines
@@ -443,24 +469,92 @@ NEVER proactively create documentation files (*.md) or README files. Only create
 - Validate all user inputs in both client and server components
 - Use proper authentication middleware for protected API routes
 - Follow the existing JWT authentication pattern in `src/lib/auth.ts`
+- **Backend Security**: Use rate limiting configurations in `apps/backend/src/config/security.ts`
+- **Input Sanitization**: Use sanitization utilities from security configuration
+- **CORS Configuration**: Ensure proper CORS origins are configured for production
+- **MCP Security**: API keys in `.mcp.json` must be properly configured for production
 
 ## Error Handling Patterns
-- API routes should return consistent error responses with appropriate HTTP status codes
-- Use try-catch blocks for database operations
+- **Frontend API Routes**: Return consistent error responses with appropriate HTTP status codes
+- **Backend API Routes**: Comprehensive error handling with security-focused error messages
+- Use try-catch blocks for database operations across both frontend and backend
 - Client components should handle loading and error states
 - Follow the existing patterns in `/api/auth/*` routes for consistent error handling
+- **Rate Limiting**: Handle rate limit errors gracefully with user-friendly messages
+- **Security Errors**: Avoid exposing sensitive system information in error responses
 
-## Database Migration Workflow
-When making schema changes (all from apps/frontend/):
-1. Edit `apps/frontend/prisma/schema.prisma`
-2. Run `cd apps/frontend && npx prisma migrate dev --name descriptive-name`
-3. Test migration with `node test-migration-success.js` (from project root)
-4. Update any affected API routes and components
-5. Run `cd apps/frontend && npx prisma generate` to update Prisma client
+## Database Schema Management
+Schema changes handled through Supabase:
+1. Use Supabase dashboard for schema modifications
+2. Use Supabase MCP server for advanced database operations
+3. Test changes in development environment
+4. Update affected API routes and components
+5. Authentication and user management via Supabase Auth
+
+## MCP (Model Context Protocol) Integration
+
+This project integrates multiple MCP servers for enhanced development capabilities:
+
+**Available MCP Servers**
+- **task-master-ai**: Comprehensive task management and project orchestration
+- **browser**: Web browsing capabilities for research and testing
+- **supabase-auth**: Supabase authentication and database management
+
+**MCP Configuration** (`.mcp.json`)
+```json
+{
+  "mcpServers": {
+    "browser": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@browsermcp/mcp"],
+      "env": {}
+    },
+    "task-master-ai": {
+      "type": "stdio", 
+      "command": "npx",
+      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
+      "env": {
+        "ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
+        "PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
+        "OPENAI_API_KEY": "YOUR_OPENAI_API_KEY_HERE",
+        "GOOGLE_API_KEY": "YOUR_GOOGLE_KEY_HERE",
+        "XAI_API_KEY": "YOUR_XAI_KEY_HERE",
+        "OPENROUTER_API_KEY": "YOUR_OPENROUTER_API_KEY_HERE",
+        "MISTRAL_API_KEY": "YOUR_MISTRAL_KEY_HERE",
+        "AZURE_OPENAI_API_KEY": "YOUR_AZURE_KEY_HERE",
+        "OLLAMA_API_KEY": "YOUR_OLLAMA_API_KEY_HERE"
+      }
+    },
+    "supabase-auth": {
+      "type": "stdio",
+      "command": "npx", 
+      "args": ["-y", "@supabase/mcp-server-supabase@latest", "--feature-groups=auth,database,storage"],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "your-supabase-access-token",
+        "SUPABASE_PROJECT_REF": "your-project-ref"
+      }
+    }
+  }
+}
+```
+
+**Usage in Development**
+- Use Task Master AI for project planning and task management
+- Use Browser MCP for research and web-based testing
+- Use Supabase MCP for direct database operations and authentication management
+- All MCP servers require proper API key configuration in environment variables
 
 ## Task Master AI Instructions
 **Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
 @./.taskmaster/CLAUDE.md
+
+**Critical Workflow Notes**
+- Task Master is fully integrated and initialized (`.taskmaster/` directory exists)
+- Use MCP tools in Claude Code or CLI commands for task management  
+- All API keys must be configured in environment variables or `.mcp.json`
+- Task files are auto-generated - never manually edit `tasks.json`
+- PRD files should be placed in `.taskmaster/docs/` for parsing
 
 
 When asked to design UI & frontend interface

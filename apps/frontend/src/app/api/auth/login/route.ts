@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { comparePassword, generateToken } from '@/lib/auth'
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,52 +8,85 @@ export async function POST(request: NextRequest) {
     // Validate input
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: 'Email e senha são obrigatórios' },
         { status: 400 }
       )
     }
 
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { email }
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Formato de email inválido' },
+        { status: 400 }
+      )
+    }
+
+    // Authenticate with Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
     })
 
-    if (!user) {
+    if (error) {
+      console.error('Supabase login error:', error)
+      
+      // Handle specific authentication errors
+      if (error.message.includes('Invalid login credentials')) {
+        return NextResponse.json(
+          { error: 'Email ou senha incorretos' },
+          { status: 401 }
+        )
+      }
+      
+      if (error.message.includes('Email not confirmed')) {
+        return NextResponse.json(
+          { error: 'Por favor, confirme seu email antes de fazer login' },
+          { status: 401 }
+        )
+      }
+
+      if (error.message.includes('Too many requests')) {
+        return NextResponse.json(
+          { error: 'Muitas tentativas de login. Tente novamente mais tarde.' },
+          { status: 429 }
+        )
+      }
+
       return NextResponse.json(
-        { error: 'Invalid credentials' },
+        { error: 'Erro no login. Tente novamente.' },
+        { status: 500 }
+      )
+    }
+
+    if (!data.user || !data.session) {
+      return NextResponse.json(
+        { error: 'Falha na autenticação' },
         { status: 401 }
       )
     }
 
-    // Verify password
-    const isValidPassword = await comparePassword(password, user.password)
-    
-    if (!isValidPassword) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      )
+    // Format user data for response
+    const user = {
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.user_metadata?.name || data.user.user_metadata?.display_name || data.user.email?.split('@')[0],
+      role: data.user.user_metadata?.role || data.user.user_metadata?.user_role || 'CLIENT',
+      created_at: data.user.created_at,
+      email_confirmed_at: data.user.email_confirmed_at,
+      last_sign_in_at: data.user.last_sign_in_at
     }
-
-    // Generate JWT token
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-    })
-
-    // Return user data (without password) and token
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _password, ...userWithoutPassword } = user
 
     return NextResponse.json({
-      user: userWithoutPassword,
-      token,
+      user,
+      session: data.session,
+      message: 'Login realizado com sucesso'
     })
+
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }

@@ -1,71 +1,109 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { hashPassword, generateToken } from '@/lib/auth'
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password } = await request.json()
+    const { name, email, password, role = 'CLIENT' } = await request.json()
 
     // Validate input
     if (!name || !email || !password) {
       return NextResponse.json(
-        { error: 'Name, email and password are required' },
+        { error: 'Nome, email e senha são obrigatórios' },
         { status: 400 }
       )
     }
 
     if (password.length < 6) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters long' },
+        { error: 'A senha deve ter pelo menos 6 caracteres' },
         { status: 400 }
       )
     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    })
-
-    if (existingUser) {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: 'User already exists' },
-        { status: 409 }
+        { error: 'Formato de email inválido' },
+        { status: 400 }
       )
     }
 
-    // Hash password and create user
-    const hashedPassword = await hashPassword(password)
-    
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
+    // Register user with Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          role,
+          display_name: name,
+          user_role: role
+        }
       }
     })
 
-    // Generate JWT token
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-    })
+    if (error) {
+      console.error('Supabase registration error:', error)
+      
+      // Handle specific Supabase errors
+      if (error.message.includes('already registered')) {
+        return NextResponse.json(
+          { error: 'Este email já está cadastrado' },
+          { status: 409 }
+        )
+      }
+      
+      if (error.message.includes('Invalid email')) {
+        return NextResponse.json(
+          { error: 'Email inválido' },
+          { status: 400 }
+        )
+      }
 
+      if (error.message.includes('Password')) {
+        return NextResponse.json(
+          { error: 'Senha não atende aos critérios de segurança' },
+          { status: 400 }
+        )
+      }
+
+      return NextResponse.json(
+        { error: 'Erro no cadastro. Tente novamente.' },
+        { status: 500 }
+      )
+    }
+
+    if (!data.user) {
+      return NextResponse.json(
+        { error: 'Falha ao criar usuário' },
+        { status: 500 }
+      )
+    }
+
+    // Format user data for response
+    const user = {
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.user_metadata?.name || name,
+      role: data.user.user_metadata?.role || role,
+      created_at: data.user.created_at,
+      email_confirmed_at: data.user.email_confirmed_at
+    }
+
+    // Return user data and session
     return NextResponse.json({
       user,
-      token,
+      session: data.session,
+      message: data.session 
+        ? 'Usuário cadastrado e logado com sucesso'
+        : 'Usuário cadastrado com sucesso. Verifique seu email para confirmar a conta.'
     })
+
   } catch (error) {
     console.error('Registration error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }

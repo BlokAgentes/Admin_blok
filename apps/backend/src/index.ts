@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
+import profileRoutes from './routes/profile';
+import { helmetConfig, corsConfig, apiRateLimit } from './config/security';
 
 // Load environment variables
 dotenv.config();
@@ -11,15 +13,18 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middlewares
-app.use(helmet());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
-}));
+// Security Middlewares
+app.use(helmet(helmetConfig));
+app.use(cors(corsConfig));
 app.use(morgan('combined'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' })); // Increased limit for file uploads
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Trust proxy for accurate IP detection (important for rate limiting)
+app.set('trust proxy', 1);
+
+// Apply general rate limiting to all API routes
+app.use('/api', apiRateLimit);
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -38,8 +43,9 @@ app.get('/api', (req, res) => {
   });
 });
 
-// Auth routes
+// Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/profile', profileRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

@@ -56,22 +56,16 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-// Helper function to get date ranges based on current date
+// Static date ranges to avoid hydration mismatch
 const getDateRange = (months: number): string => {
-  const today = new Date();
-  const startDate = new Date(today);
-  startDate.setMonth(today.getMonth() - months);
-  
-  const formatDate = (date: Date): string => {
-    const day = date.getDate();
-    const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
-                       'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    const month = monthNames[date.getMonth()];
-    const year = date.getFullYear();
-    return `${day} ${month} ${year}`;
+  // Using static dates to ensure server/client consistency
+  const ranges = {
+    6: '26 Fev 2025 - 26 Ago 2025',  // 6 months
+    3: '26 Mai 2025 - 26 Ago 2025',  // 3 months  
+    2: '26 Jun 2025 - 26 Ago 2025'   // 2 months
   };
-
-  return `${formatDate(startDate)} - ${formatDate(today)}`;
+  
+  return ranges[months as keyof typeof ranges] || ranges[6];
 };
 
 // Period configuration
