@@ -21,21 +21,45 @@ export interface AuthResponse {
 
 /**
  * Simplified Authentication service using direct Supabase client calls
- * TODO: Remove Prisma dependencies and implement purely with Supabase
  */
 export class SimpleAuthService {
   /**
    * Register a new user using Supabase Auth
-   * TODO: Implement user registration with Supabase only
    */
   async register(email: string, password: string, name: string, role: 'ADMIN' | 'CLIENT' = 'CLIENT'): Promise<AuthResponse> {
     try {
-      // TODO: Implement registration logic using only Supabase
-      // Check if user exists, create user, etc.
-      
+      // Sign up with Supabase
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            role
+          }
+        }
+      })
+
+      if (error || !data.user) {
+        return {
+          success: false,
+          error: error?.message || 'Registration failed'
+        }
+      }
+
       return {
-        success: false,
-        error: 'Registration temporarily disabled - Prisma removal in progress'
+        success: true,
+        data: {
+          user: {
+            id: data.user.id,
+            email: data.user.email || email,
+            name: name,
+            role: role,
+            createdAt: data.user.created_at || new Date().toISOString(),
+            updatedAt: data.user.updated_at || new Date().toISOString()
+          },
+          session: data.session
+        }
       }
     } catch (error) {
       console.error('Registration error:', error)
@@ -48,7 +72,6 @@ export class SimpleAuthService {
 
   /**
    * Login user using Supabase Auth
-   * TODO: Implement login with Supabase only
    */
   async login(email: string, password: string): Promise<AuthResponse> {
     try {
@@ -65,7 +88,7 @@ export class SimpleAuthService {
         }
       }
 
-      // TODO: Get user profile from Supabase profiles table instead of Prisma
+      // Get user data from Supabase auth
       return {
         success: true,
         data: {
@@ -145,14 +168,27 @@ export class SimpleAuthService {
 
   /**
    * Confirm email verification
-   * TODO: Implement with Supabase only
    */
   async confirmEmail(token: string, type: string = 'signup'): Promise<AuthResponse> {
     try {
-      // TODO: Implement email confirmation
+      const { data, error } = await supabaseClient.auth.verifyOtp({
+        token_hash: token,
+        type: type as any
+      })
+
+      if (error || !data.user) {
+        return {
+          success: false,
+          error: error?.message || 'Email confirmation failed'
+        }
+      }
+
       return {
-        success: false,
-        error: 'Email confirmation temporarily disabled - Prisma removal in progress'
+        success: true,
+        data: {
+          user: this.formatUser(data.user),
+          session: data.session
+        }
       }
     } catch (error) {
       console.error('Email confirmation error:', error)
@@ -204,14 +240,23 @@ export class SimpleAuthService {
 
   /**
    * Get user profile by ID
-   * TODO: Implement with Supabase profiles table
    */
   async getUserProfile(userId: string): Promise<AuthResponse> {
     try {
-      // TODO: Query Supabase profiles table instead of Prisma
+      const { data, error } = await supabaseAdmin.auth.admin.getUserById(userId)
+
+      if (error || !data.user) {
+        return {
+          success: false,
+          error: error?.message || 'User not found'
+        }
+      }
+
       return {
-        success: false,
-        error: 'User profile temporarily disabled - Prisma removal in progress'
+        success: true,
+        data: {
+          user: this.formatUser(data.user)
+        }
       }
     } catch (error) {
       console.error('Get user profile error:', error)
@@ -238,12 +283,11 @@ export class SimpleAuthService {
 
   /**
    * Log audit events
-   * TODO: Implement with Supabase audit table
    */
   private async logAudit(action: string, userId: string, details: any): Promise<void> {
     try {
-      // TODO: Log to Supabase audit table instead of Prisma
-      console.log('Audit log:', { action, userId, details })
+      // Log to console for now - could be enhanced with Supabase table later
+      console.log('Audit log:', { action, userId, details, timestamp: new Date().toISOString() })
     } catch (error) {
       console.error('Failed to log audit event:', error)
     }

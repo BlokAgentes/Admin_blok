@@ -233,7 +233,7 @@ async function createSchema() {
   if (errorCount === 0) {
     console.log('\n🎉 Database schema created successfully!');
     console.log('📝 Next steps:');
-    console.log('  1. Update your frontend to use Supabase instead of Prisma');
+    console.log('  1. Update your frontend to use the Supabase tables');
     console.log('  2. Test the authentication endpoints');
     console.log('  3. Verify RLS policies if needed');
   } else {

@@ -422,89 +422,157 @@ function ContaPageContent() {
         </p>
       </div>
 
-      {/* Número do Cartão */}
-      <div className="space-y-2">
-        <label className="block text-black text-sm font-medium" htmlFor="cardNumber">
-          Número do Cartão
-        </label>
-        <input 
-          type="text" 
-          id="cardNumber" 
-          className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
-          placeholder="Digite o número do cartão"
-        />
-        <p className="text-gray-500 text-[13px] leading-[1.4]">
-          Este é o número do seu cartão.
-        </p>
-      </div>
+      {/* Campos específicos baseados na forma de pagamento */}
+      {selectedPayment === "credit" && (
+        <>
+          {/* Número do Cartão */}
+          <div className="space-y-2">
+            <label className="block text-black text-sm font-medium" htmlFor="cardNumber">
+              Número do Cartão
+            </label>
+            <input 
+              type="text" 
+              id="cardNumber" 
+              className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+              placeholder="Digite o número do cartão"
+            />
+            <p className="text-gray-500 text-[13px] leading-[1.4]">
+              Este é o número do seu cartão.
+            </p>
+          </div>
 
-      {/* Validade, Ano e CV em três colunas */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Validade, Ano e CV em três colunas */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="block text-black text-sm font-medium" htmlFor="expires">
+                Validade
+              </label>
+              <select 
+                id="expires"
+                className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out focus:border-black focus:ring-1 focus:ring-black"
+              >
+                <option value="">Mês</option>
+                <option value="01">Janeiro</option>
+                <option value="02">Fevereiro</option>
+                <option value="03">Março</option>
+                <option value="04">Abril</option>
+                <option value="05">Maio</option>
+                <option value="06">Junho</option>
+                <option value="07">Julho</option>
+                <option value="08">Agosto</option>
+                <option value="09">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+              </select>
+              <p className="text-gray-500 text-[13px] leading-[1.4]">
+                Esta é a data de validade do seu cartão.
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-black text-sm font-medium" htmlFor="year">
+                Ano
+              </label>
+              <select 
+                id="year"
+                className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out focus:border-black focus:ring-1 focus:ring-black"
+              >
+                <option value="">Ano</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+              </select>
+              <p className="text-gray-500 text-[13px] leading-[1.4]">
+                Este é o ano de validade do seu cartão.
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-black text-sm font-medium" htmlFor="cv">
+                CV
+              </label>
+              <input 
+                type="text" 
+                id="cv" 
+                className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+                placeholder="CVC"
+                maxLength={3}
+              />
+              <p className="text-gray-500 text-[13px] leading-[1.4]">
+                Este é o seu código CV.
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
+      {selectedPayment === "boleto" && (
+        <>
+          {/* Nome completo do pagador */}
+          <div className="space-y-2">
+            <label className="block text-black text-sm font-medium" htmlFor="payerName">
+              Nome completo do pagador
+            </label>
+            <input 
+              type="text" 
+              id="payerName" 
+              className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+              placeholder="Digite o nome completo do pagador"
+            />
+            <p className="text-gray-500 text-[13px] leading-[1.4]">
+              Nome completo da pessoa ou empresa responsável pelo pagamento.
+            </p>
+          </div>
+
+          {/* CPF ou CNPJ do pagador */}
+          <div className="space-y-2">
+            <label className="block text-black text-sm font-medium" htmlFor="payerDocument">
+              CPF ou CNPJ do pagador
+            </label>
+            <input 
+              type="text" 
+              id="payerDocument" 
+              className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+              placeholder="000.000.000-00 ou 00.000.000/0000-00"
+            />
+            <p className="text-gray-500 text-[13px] leading-[1.4]">
+              CPF para pessoa física ou CNPJ para pessoa jurídica.
+            </p>
+          </div>
+
+          {/* E-mail do pagador */}
+          <div className="space-y-2">
+            <label className="block text-black text-sm font-medium" htmlFor="payerEmail">
+              E-mail do pagador
+            </label>
+            <input 
+              type="email" 
+              id="payerEmail" 
+              className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+              placeholder="Digite o e-mail do pagador"
+            />
+            <p className="text-gray-500 text-[13px] leading-[1.4]">
+              E-mail para envio do boleto e confirmações de pagamento.
+            </p>
+          </div>
+        </>
+      )}
+
+      {selectedPayment === "pix" && (
         <div className="space-y-2">
-          <label className="block text-black text-sm font-medium" htmlFor="expires">
-            Validade
-          </label>
-          <select 
-            id="expires"
-            className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out focus:border-black focus:ring-1 focus:ring-black"
-          >
-            <option value="">Mês</option>
-            <option value="01">Janeiro</option>
-            <option value="02">Fevereiro</option>
-            <option value="03">Março</option>
-            <option value="04">Abril</option>
-            <option value="05">Maio</option>
-            <option value="06">Junho</option>
-            <option value="07">Julho</option>
-            <option value="08">Agosto</option>
-            <option value="09">Setembro</option>
-            <option value="10">Outubro</option>
-            <option value="11">Novembro</option>
-            <option value="12">Dezembro</option>
-          </select>
-          <p className="text-gray-500 text-[13px] leading-[1.4]">
-            Esta é a data de validade do seu cartão.
-          </p>
+          <div className="p-6 border border-gray-300 rounded-md bg-gray-50 text-center">
+            <p className="text-black text-sm font-medium mb-2">Pagamento via PIX</p>
+            <p className="text-gray-600 text-sm">
+              Após confirmar, você receberá um código PIX para realizar o pagamento instantaneamente.
+            </p>
+          </div>
         </div>
-        
-        <div className="space-y-2">
-          <label className="block text-black text-sm font-medium" htmlFor="year">
-            Ano
-          </label>
-          <select 
-            id="year"
-            className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out focus:border-black focus:ring-1 focus:ring-black"
-          >
-            <option value="">Ano</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-            <option value="2027">2027</option>
-            <option value="2028">2028</option>
-            <option value="2029">2029</option>
-            <option value="2030">2030</option>
-          </select>
-          <p className="text-gray-500 text-[13px] leading-[1.4]">
-            Este é o ano de validade do seu cartão.
-          </p>
-        </div>
-        
-        <div className="space-y-2">
-          <label className="block text-black text-sm font-medium" htmlFor="cv">
-            CV
-          </label>
-          <input 
-            type="text" 
-            id="cv" 
-            className="w-full h-12 px-4 text-sm text-black bg-white border border-gray-300 rounded-md outline-none transition-colors duration-200 ease-in-out placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
-            placeholder="CVC"
-            maxLength={3}
-          />
-          <p className="text-gray-500 text-[13px] leading-[1.4]">
-            Este é o seu código CV.
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* Botão Continuar */}
       <div className="pt-4">
@@ -773,44 +841,6 @@ function ContaPageContent() {
           align-items: center;
           gap: 16px;
         }
-        .model-selector {
-          position: relative;
-        }
-        .model-dropdown {
-          padding: 8px 32px 8px 12px;
-          font-size: 14px;
-          color: #000000;
-          background-color: #ffffff;
-          border: 1px solid #d1d5db;
-          border-radius: 6px;
-          outline: none;
-          appearance: none;
-          cursor: pointer;
-          min-width: 200px;
-          transition: border-color 0.2s ease;
-        }
-        .model-dropdown:focus {
-          border-color: #000000;
-          box-shadow: 0 0 0 1px #000000;
-        }
-        .model-dropdown:hover {
-          border-color: #9ca3af;
-        }
-        .model-dropdown:disabled {
-          background-color: #f9fafb;
-          color: #9ca3af;
-          cursor: not-allowed;
-        }
-        .model-selector::after {
-          content: '▼';
-          position: absolute;
-          right: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-          font-size: 12px;
-          color: #6b7280;
-          pointer-events: none;
-        }
         .api-toggle-container {
           display: flex;
           align-items: center;
@@ -976,19 +1006,22 @@ function ContaPageContent() {
             <h3 className="model-title">OpenAI</h3>
             <div className="model-controls">
               <div className="model-selector">
-                <select 
-                  className="model-dropdown"
-                  value={selectedModels.openai}
-                  onChange={(e) => selectModel('openai', e.target.value)}
+                <Select 
+                  value={selectedModels.openai} 
+                  onValueChange={(value) => selectModel('openai', value)}
                   disabled={!apiToggleStates.openai}
                 >
-                  <option value="">Selecione um modelo</option>
-                  <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                  <option value="gpt-4">GPT-4</option>
-                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                  <option value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K</option>
-                  <option value="text-davinci-003">Text Davinci 003</option>
-                </select>
+                  <SelectTrigger className="w-[200px] h-10 text-sm">
+                    <SelectValue placeholder="Selecione um modelo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gpt-4-turbo">GPT-4 Turbo</SelectItem>
+                    <SelectItem value="gpt-4">GPT-4</SelectItem>
+                    <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
+                    <SelectItem value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K</SelectItem>
+                    <SelectItem value="text-davinci-003">Text Davinci 003</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="api-toggle-container">
                 <span className="toggle-label">API</span>
@@ -1033,19 +1066,22 @@ function ContaPageContent() {
             <h3 className="model-title">Anthropic</h3>
             <div className="model-controls">
               <div className="model-selector">
-                <select 
-                  className="model-dropdown"
-                  value={selectedModels.anthropic}
-                  onChange={(e) => selectModel('anthropic', e.target.value)}
+                <Select 
+                  value={selectedModels.anthropic} 
+                  onValueChange={(value) => selectModel('anthropic', value)}
                   disabled={!apiToggleStates.anthropic}
                 >
-                  <option value="">Selecione um modelo</option>
-                  <option value="claude-3-opus">Claude 3 Opus</option>
-                  <option value="claude-3-sonnet">Claude 3 Sonnet</option>
-                  <option value="claude-3-haiku">Claude 3 Haiku</option>
-                  <option value="claude-2.1">Claude 2.1</option>
-                  <option value="claude-instant">Claude Instant</option>
-                </select>
+                  <SelectTrigger className="w-[200px] h-10 text-sm">
+                    <SelectValue placeholder="Selecione um modelo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="claude-3-opus">Claude 3 Opus</SelectItem>
+                    <SelectItem value="claude-3-sonnet">Claude 3 Sonnet</SelectItem>
+                    <SelectItem value="claude-3-haiku">Claude 3 Haiku</SelectItem>
+                    <SelectItem value="claude-2.1">Claude 2.1</SelectItem>
+                    <SelectItem value="claude-instant">Claude Instant</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="api-toggle-container">
                 <span className="toggle-label">API</span>
@@ -1090,19 +1126,22 @@ function ContaPageContent() {
             <h3 className="model-title">Google Gemini</h3>
             <div className="model-controls">
               <div className="model-selector">
-                <select 
-                  className="model-dropdown"
-                  value={selectedModels.gemini}
-                  onChange={(e) => selectModel('gemini', e.target.value)}
+                <Select 
+                  value={selectedModels.gemini} 
+                  onValueChange={(value) => selectModel('gemini', value)}
                   disabled={!apiToggleStates.gemini}
                 >
-                  <option value="">Selecione um modelo</option>
-                  <option value="gemini-pro">Gemini Pro</option>
-                  <option value="gemini-pro-vision">Gemini Pro Vision</option>
-                  <option value="gemini-ultra">Gemini Ultra</option>
-                  <option value="palm-2">PaLM 2</option>
-                  <option value="text-bison">Text Bison</option>
-                </select>
+                  <SelectTrigger className="w-[200px] h-10 text-sm">
+                    <SelectValue placeholder="Selecione um modelo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gemini-pro">Gemini Pro</SelectItem>
+                    <SelectItem value="gemini-pro-vision">Gemini Pro Vision</SelectItem>
+                    <SelectItem value="gemini-ultra">Gemini Ultra</SelectItem>
+                    <SelectItem value="palm-2">PaLM 2</SelectItem>
+                    <SelectItem value="text-bison">Text Bison</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="api-toggle-container">
                 <span className="toggle-label">API</span>
@@ -1147,18 +1186,21 @@ function ContaPageContent() {
             <h3 className="model-title">xAI Grok</h3>
             <div className="model-controls">
               <div className="model-selector">
-                <select 
-                  className="model-dropdown"
-                  value={selectedModels.grok}
-                  onChange={(e) => selectModel('grok', e.target.value)}
+                <Select 
+                  value={selectedModels.grok} 
+                  onValueChange={(value) => selectModel('grok', value)}
                   disabled={!apiToggleStates.grok}
                 >
-                  <option value="">Selecione um modelo</option>
-                  <option value="grok-1">Grok-1</option>
-                  <option value="grok-1.5">Grok-1.5</option>
-                  <option value="grok-2">Grok-2</option>
-                  <option value="grok-beta">Grok Beta</option>
-                </select>
+                  <SelectTrigger className="w-[200px] h-10 text-sm">
+                    <SelectValue placeholder="Selecione um modelo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="grok-1">Grok-1</SelectItem>
+                    <SelectItem value="grok-1.5">Grok-1.5</SelectItem>
+                    <SelectItem value="grok-2">Grok-2</SelectItem>
+                    <SelectItem value="grok-beta">Grok Beta</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="api-toggle-container">
                 <span className="toggle-label">API</span>

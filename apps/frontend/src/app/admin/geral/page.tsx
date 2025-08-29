@@ -14,7 +14,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import CashflowChart from "@/components/charts/cashflow-chart"
+import CashflowChart, { PeriodKey } from "@/components/charts/cashflow-chart"
 import { 
   TrendingUp, 
   Clock, 
@@ -42,6 +42,8 @@ function formatNumber(n: number) {
 }
 
 export default function GeralPage() {
+  const [selectedPeriod, setSelectedPeriod] = useState<PeriodKey>('6m');
+
   const stats = [
     {
       title: 'Execuções Totais',
@@ -201,9 +203,6 @@ export default function GeralPage() {
                 <table className="w-full border-collapse">
                   <thead className="bg-muted/50 border-t border-b border-border">
                     <tr>
-                      <th className="text-left p-3 w-10">
-                        <input type="checkbox" className="w-4 h-4 border border-input rounded cursor-pointer"/>
-                      </th>
                       <th className="text-left p-3 text-sm font-medium text-muted-foreground">Email ↓</th>
                       <th className="text-left p-3 text-sm font-medium text-muted-foreground">ID</th>
                       <th className="text-left p-3 text-sm font-medium text-muted-foreground">Duração</th>
@@ -213,9 +212,6 @@ export default function GeralPage() {
                   <tbody>
                     {recentActivities.map((activity, index) => (
                       <tr key={index} className="border-b border-border hover:bg-muted/50 transition-colors">
-                        <td className="p-4">
-                          <input type="checkbox" className="w-4 h-4 border border-input rounded cursor-pointer"/>
-                        </td>
                         <td className="p-4">
                           <span className="text-sm font-medium text-foreground underline cursor-pointer hover:text-primary">{activity.email}</span>
                         </td>
@@ -232,7 +228,10 @@ export default function GeralPage() {
         </div>
 
         {/* Cashflow Chart Section */}
-        <CashflowChart />
+        <CashflowChart 
+          selectedPeriod={selectedPeriod} 
+          onPeriodChange={setSelectedPeriod} 
+        />
       </div>
     </AdminLayout>
   )

@@ -1,5 +1,5 @@
-// Mock database for development without PostgreSQL
-// This simulates Prisma operations for testing
+// Mock database for development and testing
+// This simulates database operations without requiring a real database
 
 interface MockUser {
   id: string
@@ -65,8 +65,8 @@ let mockUsers: MockUser[] = [
 
 let mockAuditLogs: MockAuditLog[] = []
 
-// Mock Prisma client
-export const mockPrisma = {
+// Mock database client
+export const mockDB = {
   user: {
     findUnique: async ({ where }: { where: any }) => {
       if (where.email) {

@@ -15,7 +15,7 @@ O backend foi **alterado com sucesso** para utilizar a autenticação Supabase c
 ### 2. Serviço de Autenticação
 **Arquivo**: `src/mcp/simple-auth-service.ts`
 - ✅ **Registro de usuário** otimizado com limpeza automática em caso de erro
-- ✅ **Login de usuário** com sincronização automática Supabase ↔ Prisma
+- ✅ **Login de usuário** com Supabase Auth completo
 - ✅ Tratamento específico de erros Supabase (email não confirmado, credenciais inválidas, etc.)
 - ✅ Logs de auditoria aprimorados para rastreamento
 - ✅ Validação de usuários existentes antes do registro
@@ -40,8 +40,8 @@ SUPABASE_ANON_KEY="seu-anon-key"
 # Opcional (para operações administrativas avançadas)
 SUPABASE_SERVICE_ROLE="seu-service-role-key"
 
-# Database (mantém compatibilidade com Prisma)
-DATABASE_URL="postgresql://user:password@localhost:5432/db"
+# Backend Security (opcional)
+JWT_SECRET="seu-jwt-secret"
 ```
 
 ## 🚀 Como Funciona Agora
@@ -49,19 +49,17 @@ DATABASE_URL="postgresql://user:password@localhost:5432/db"
 ### Fluxo de Registro
 1. **Frontend/API** → Chama `/auth/register`
 2. **Backend** → Cria usuário no Supabase Auth
-3. **Backend** → Sincroniza dados no Prisma (PostgreSQL)
-4. **Backend** → Retorna dados do usuário + sessão Supabase
+3. **Backend** → Retorna dados do usuário + sessão Supabase
 
 ### Fluxo de Login
 1. **Frontend/API** → Chama `/auth/login`
 2. **Backend** → Autentica via Supabase Auth
-3. **Backend** → Sincroniza dados Supabase ↔ Prisma (se necessário)
-4. **Backend** → Retorna dados do usuário + sessão/tokens
+3. **Backend** → Retorna dados do usuário + sessão/tokens
 
 ### Autenticação de Requests
 1. **Frontend** → Envia `Authorization: Bearer <access_token>`
 2. **Middleware** → Valida token via Supabase
-3. **Middleware** → Obtém dados do usuário do Prisma
+3. **Middleware** → Obtém dados do usuário do Supabase
 4. **Route Handler** → Acesso aos dados via `req.user`
 
 ## 🧪 Testes Realizados
@@ -113,7 +111,7 @@ O arquivo `test-supabase-integration.js` foi criado e testado:
 ## ⚡ Performance
 
 - ✅ Reutilização de cliente Supabase (singleton pattern)
-- ✅ Sincronização otimizada Supabase ↔ Prisma
+- ✅ Operações otimizadas com Supabase
 - ✅ Cache de sessão quando possível
 - ✅ Logs estruturados para debugging
 
@@ -121,4 +119,4 @@ O arquivo `test-supabase-integration.js` foi criado e testado:
 
 **🎉 Status**: ✅ **IMPLEMENTADO COM SUCESSO**
 
-A autenticação Supabase está **totalmente funcional** no backend utilizando `SUPABASE_URL` e `SUPABASE_ANON_KEY`. O sistema mantém compatibilidade com a estrutura existente enquanto adiciona a robustez do Supabase Auth.
+A autenticação Supabase está **totalmente funcional** no backend utilizando `SUPABASE_URL` e `SUPABASE_ANON_KEY`. O sistema utiliza completamente a robustez do Supabase Auth.

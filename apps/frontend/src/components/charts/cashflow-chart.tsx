@@ -87,10 +87,16 @@ const PERIODS = {
   },
 } as const;
 
-type PeriodKey = keyof typeof PERIODS;
+export type PeriodKey = keyof typeof PERIODS;
 
-export default function CashflowChart() {
-  const [selectedPeriod, setSelectedPeriod] = useState<PeriodKey>('6m');
+export { PERIODS };
+
+interface CashflowChartProps {
+  selectedPeriod: PeriodKey;
+  onPeriodChange: (period: PeriodKey) => void;
+}
+
+export default function CashflowChart({ selectedPeriod, onPeriodChange }: CashflowChartProps) {
   const [isHovering, setIsHovering] = useState(false);
 
   // Filter data based on selected period
@@ -120,8 +126,20 @@ export default function CashflowChart() {
 
   return (
     <Card className="w-full">
-      <CardHeader className="border-0 min-h-auto pt-6 pb-4">
+      <CardHeader className="border-0 min-h-auto pt-6 pb-4 flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-semibold">Execuções</CardTitle>
+        <Select value={selectedPeriod} onValueChange={(value) => onPeriodChange(value as PeriodKey)}>
+          <SelectTrigger className="w-[100px]">
+            {currentPeriod.label}
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(PERIODS).map((period) => (
+              <SelectItem key={period.key} value={period.key}>
+                {period.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </CardHeader>
 
       <CardContent className="px-0">
@@ -141,25 +159,10 @@ export default function CashflowChart() {
 
         {/* Chart */}
         <div 
-          className="h-[300px] w-full px-5 transition-all duration-200 relative"
+          className="h-[300px] w-full px-5 transition-all duration-200"
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
         >
-          {/* Select positioned over the chart */}
-          <div className="absolute top-4 right-8 z-10">
-            <Select value={selectedPeriod} onValueChange={(value) => setSelectedPeriod(value as PeriodKey)}>
-              <SelectTrigger className="w-[100px] bg-background/80 backdrop-blur-sm border-border/50">
-                {currentPeriod.label}
-              </SelectTrigger>
-              <SelectContent>
-                {Object.values(PERIODS).map((period) => (
-                  <SelectItem key={period.key} value={period.key}>
-                    {period.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={filteredData}

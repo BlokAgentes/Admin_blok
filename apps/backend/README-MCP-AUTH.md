@@ -41,9 +41,9 @@ Este documento descreve a implementação do sistema de autenticação usando o 
 - **Headers de Segurança**: Helmet configurado
 - **CORS**: Configuração segura
 
-### 6. **Integração Dual**
-- **Supabase Auth**: Autenticação principal via Supabase
-- **Prisma Sync**: Sincronização com banco local para compatibilidade
+### 6. **Integração Supabase**
+- **Supabase Auth**: Autenticação completa via Supabase
+- **Supabase Storage**: Armazenamento de arquivos e avatares
 - **Audit Trail**: Logs completos de auditoria
 
 ## 🔧 Configuração Necessária

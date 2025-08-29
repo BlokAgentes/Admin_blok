@@ -53,17 +53,23 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Registration failed')
+        throw new Error(data.error || 'Erro no cadastro. Tente novamente.')
       }
 
-      // Store token in localStorage
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
-
-      // Redirect to admin page
-      router.push('/admin')
+      // Handle successful registration
+      if (data.session?.access_token) {
+        // Store session token and user data in localStorage
+        localStorage.setItem('token', data.session.access_token)
+        localStorage.setItem('user', JSON.stringify(data.user))
+        
+        // Redirect to admin page
+        router.push('/admin')
+      } else {
+        // Email confirmation required
+        setError('Conta criada! Verifique seu email para confirmar a conta antes de fazer login.')
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? err.message : 'Erro no cadastro. Tente novamente.')
     } finally {
       setIsLoading(false)
     }
