@@ -1,0 +1,55 @@
+# Task ID: 29
+# Title: Criar página de Conversas com estatísticas
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Desenvolver página de conversas exibindo total de contatos e mensagens não lidas, usando componentes shadcn/ui e seguindo design system da aplicação
+# Details:
+Página deve incluir: 1) Dashboard com estatísticas (total de contatos, não lidos) 2) Lista de conversas com preview 3) Design responsivo 4) Integração com cores do Admin/Sidebar
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Set Up Page Structure and Routing [pending]
+### Dependencies: None
+### Description: Create the base page for Conversas within the application, ensuring correct routing and layout integration with the existing Admin/Sidebar structure.
+### Details:
+Define a new route for the Conversas page. Use the application's layout system to embed the page within the Admin/Sidebar context. Ensure the page uses the design system's base layout components for consistency.
+
+## 2. Integrate shadcn/ui and Configure Theme [pending]
+### Dependencies: 29.1
+### Description: Install and configure shadcn/ui components, ensuring theme colors and styles match the Admin/Sidebar palette.
+### Details:
+Install shadcn/ui if not already present. Configure the theme to inherit or override colors and typography to match the Admin/Sidebar. Test with sample components to confirm visual consistency.
+
+## 3. Implement Dashboard Statistics Component [pending]
+### Dependencies: 29.2
+### Description: Develop a dashboard section displaying total contacts and unread messages, using shadcn/ui components and fetching data from the backend.
+### Details:
+Create a statistics card or dashboard widget using shadcn/ui primitives. Fetch total contacts and unread message counts from the backend (using existing READ operations). Display the values with clear labels and icons.
+
+## 4. Build Conversations List with Preview [pending]
+### Dependencies: 29.3
+### Description: Develop a scrollable list of conversations, each showing contact name, last message preview, timestamp, and unread indicator, using shadcn/ui list components.
+### Details:
+Fetch conversation data from the backend. For each conversation, render a list item with avatar, contact name, last message snippet, time, and unread badge if applicable. Use shadcn/ui List, Avatar, and Badge components.
+
+## 5. Implement Responsive Design [pending]
+### Dependencies: 29.4
+### Description: Ensure the Conversas page and all components adapt gracefully to different screen sizes, following the application's responsive design guidelines.
+### Details:
+Apply responsive utility classes (e.g., Tailwind) and test shadcn/ui components for mobile, tablet, and desktop layouts. Adjust spacing, font sizes, and component arrangement as needed for usability.
+
+## 6. Integrate Real-Time Updates for Conversations [pending]
+### Dependencies: 29.5
+### Description: Enable real-time updates for the conversations list and statistics, so new messages and status changes appear without manual refresh.
+### Details:
+Use Supabase subscriptions or another real-time mechanism to listen for new messages and status changes. Update the UI state accordingly when events are received.
+
+## 7. Finalize UI Polish and Accessibility [pending]
+### Dependencies: 29.6
+### Description: Refine visual details, ensure accessibility compliance, and perform final QA to match the design system and user experience standards.
+### Details:
+Review spacing, colors, and typography for consistency. Add ARIA labels and keyboard navigation support. Test with screen readers. Address any visual or usability bugs found during QA.
+

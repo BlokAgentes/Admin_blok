@@ -1,0 +1,110 @@
+# Task ID: 23
+# Title: Implementar Operações CREATE
+# Status: done
+# Dependencies: 22
+# Priority: medium
+# Description: Desenvolver funções para inserir novos registros no banco de dados com validação adequada.
+# Details:
+1. Criar um módulo para operações de inserção de dados:
+```javascript
+import { supabase } from './supabaseClient'
+
+/**
+ * Insere um novo usuário no banco de dados
+ * @param {Object} userData - Dados do usuário a ser inserido
+ * @param {string} userData.nome - Nome do usuário
+ * @param {string} userData.email - Email do usuário
+ * @returns {Promise<Object>} Objeto contendo dados do usuário inserido ou erro
+ */
+export async function createUser({ nome, email }) {
+  // Validação básica dos dados
+  if (!nome || !email) {
+    return { error: { message: 'Nome e email são obrigatórios' } }
+  }
+  
+  if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    return { error: { message: 'Formato de email inválido' } }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .insert([{ nome, email }])
+      .select()
+
+    if (error) throw error
+    
+    return { data: data[0], error: null }
+  } catch (error) {
+    console.error('Erro ao criar usuário:', error)
+    return { 
+      data: null, 
+      error: { 
+        message: error.code === '23505' ? 'Email já cadastrado' : 'Erro ao criar usuário' 
+      } 
+    }
+  }
+}
+```
+
+2. Implementar validação de dados antes da inserção
+3. Adicionar tratamento para erros comuns (como violação de unicidade)
+4. Considerar implementar transações para operações que afetam múltiplas tabelas
+5. Documentar a API com JSDoc ou similar
+
+# Test Strategy:
+1. Criar testes unitários para validar o formato dos dados antes da inserção
+2. Testar a inserção de dados válidos e verificar se foram inseridos corretamente
+3. Testar cenários de erro (email duplicado, dados inválidos)
+4. Verificar se os hooks de criado_em são acionados corretamente
+5. Testar a performance com inserção de múltiplos registros
+
+# Subtasks:
+## 1. Desenvolver módulo SupabaseCRUD [completed]
+### Dependencies: None
+### Description: Criar o módulo principal para operações de inserção de dados no Supabase
+### Details:
+
+
+## 2. Implementar criação de usuários [completed]
+### Dependencies: None
+### Description: Desenvolver função para inserir novos usuários com validação adequada
+### Details:
+
+
+## 3. Implementar criação de categorias [completed]
+### Dependencies: None
+### Description: Desenvolver função para inserir novas categorias com suporte a relacionamentos
+### Details:
+
+
+## 4. Implementar criação de itens [completed]
+### Dependencies: None
+### Description: Desenvolver função para inserir novos itens com suporte a foreign keys
+### Details:
+
+
+## 5. Implementar tratamento de erros [completed]
+### Dependencies: None
+### Description: Adicionar tratamento robusto para erros comuns como violação de unicidade
+### Details:
+
+
+## 6. Implementar logs de auditoria automáticos [completed]
+### Dependencies: None
+### Description: Configurar sistema para registrar automaticamente operações de criação
+### Details:
+
+
+## 7. Criar scripts de teste [completed]
+### Dependencies: None
+### Description: Desenvolver scripts para testar as operações de criação
+### Details:
+
+
+## 8. Identificar e corrigir triggers problemáticos [completed]
+### Dependencies: None
+### Description: Resolver problemas com triggers que afetavam as operações de criação
+### Details:
+
+

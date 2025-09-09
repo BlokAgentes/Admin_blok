@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  # Supabase Local Development Stack
+  supabase:
+    image: supabase/postgres:15.1.0.117
+    container_name: blok_supabase
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: your_password_here
+      POSTGRES_DB: postgres
+      JWT_SECRET: your_jwt_secret_here
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - supabase_data:/var/lib/postgresql/data
+      - ./supabase/init:/docker-entrypoint-initdb.d
+
+  # Supabase Studio (opcional - para desenvolvimento local)
+  supabase-studio:
+    image: supabase/studio:latest
+    container_name: blok_supabase_studio
+    restart: unless-stopped
+    environment:
+      STUDIO_PG_META_URL: http://supabase:8080
+      POSTGRES_PASSWORD: your_password_here
+    ports:
+      - "3001:3000"
+    depends_on:
+      - supabase
+
+  # Redis para cache (opcional)
+  redis:
+    image: redis:7-alpine
+    container_name: blok_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  supabase_data:
+  redis_data:

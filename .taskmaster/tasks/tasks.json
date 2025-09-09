@@ -1,0 +1,900 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 21,
+        "title": "Configurar Conexão com Supabase",
+        "description": "Estabelecer conexão com o projeto Supabase existente, validar credenciais e testar a conectividade.",
+        "details": "1. Instalar a biblioteca Supabase JS Client (versão 2.38.4 ou superior) via npm/yarn: `npm install @supabase/supabase-js`\n2. Criar arquivo de configuração `.env` para armazenar as credenciais do Supabase (URL e API Key)\n3. Implementar um módulo de conexão:\n```javascript\nimport { createClient } from '@supabase/supabase-js'\n\nconst supabaseUrl = process.env.SUPABASE_URL\nconst supabaseKey = process.env.SUPABASE_KEY\n\nif (!supabaseUrl || !supabaseKey) {\n  throw new Error('Credenciais do Supabase não configuradas')\n}\n\nexport const supabase = createClient(supabaseUrl, supabaseKey)\n\n// Função para testar a conexão\nexport async function testConnection() {\n  try {\n    const { data, error } = await supabase.from('pg_tables').select('*').limit(1)\n    if (error) throw error\n    return { success: true, message: 'Conexão estabelecida com sucesso' }\n  } catch (error) {\n    return { success: false, message: `Erro de conexão: ${error.message}` }\n  }\n}\n```\n4. Implementar validação de permissões para garantir que o usuário tem acesso às operações necessárias\n5. Adicionar tratamento de erros e retry logic para falhas de conexão temporárias",
+        "testStrategy": "1. Criar testes unitários usando Jest ou Mocha para verificar se o cliente Supabase é inicializado corretamente\n2. Implementar teste de integração que verifica a conexão real com o Supabase\n3. Testar cenários de falha (credenciais inválidas, servidor indisponível)\n4. Verificar se as variáveis de ambiente são carregadas corretamente\n5. Validar que o token de API tem as permissões necessárias executando uma query simples",
+        "priority": "high",
+        "dependencies": [],
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Supabase JS Client Library",
+            "description": "Install the Supabase JS Client (version 2.38.4 or higher) in the project using npm or yarn.",
+            "dependencies": [],
+            "details": "Run the command `npm install @supabase/supabase-js` or `yarn add @supabase/supabase-js` in the project root to add the required library.",
+            "status": "done",
+            "testStrategy": "Verify that the package appears in package.json and can be imported without errors."
+          },
+          {
+            "id": 2,
+            "title": "Configure Environment Variables for Supabase Credentials",
+            "description": "Create and configure a `.env` file to securely store Supabase URL and API Key.",
+            "dependencies": [
+              "21.1"
+            ],
+            "details": "Add SUPABASE_URL and SUPABASE_KEY variables to the `.env` file and ensure they are loaded into the application environment.",
+            "status": "done",
+            "testStrategy": "Check that process.env.SUPABASE_URL and process.env.SUPABASE_KEY are accessible and correctly populated at runtime."
+          },
+          {
+            "id": 3,
+            "title": "Implement Supabase Connection Module",
+            "description": "Develop a module that initializes the Supabase client using credentials from environment variables and exposes the client for use.",
+            "dependencies": [
+              "21.2"
+            ],
+            "details": "Create a file (e.g., `supabaseClient.js`) that imports `createClient` from '@supabase/supabase-js', reads credentials from environment variables, validates their presence, and exports the initialized client.",
+            "status": "done",
+            "testStrategy": "Write a unit test to ensure the client is created only when both credentials are present and throws an error otherwise."
+          },
+          {
+            "id": 4,
+            "title": "Validate Credentials and Test Connectivity",
+            "description": "Implement a function to test the Supabase connection by performing a simple query and handling errors.",
+            "dependencies": [
+              "21.3"
+            ],
+            "details": "Add an async function (e.g., `testConnection`) that queries a system or test table, checks for errors, and returns a success or failure response.\n<info added on 2025-07-29T16:39:14.342Z>\n## Connection Test Results\n\n✅ Teste de conexão executado com sucesso!\n\n**Resultados:**\n- ✅ Conexão estabelecida com sucesso\n- ✅ SELECT: Permitido\n- ❌ INSERT: Negado (Row Level Security Policy)\n- ✅ UPDATE: Permitido  \n- ✅ DELETE: Permitido\n\n**Observações:**\n- A tabela client_base existe mas está vazia\n- INSERT está bloqueado por RLS (Row Level Security)\n- Todas as outras operações estão funcionando\n- Credenciais configuradas corretamente\n\n**Próximos passos:**\n- Configurar RLS para permitir INSERT\n- Ou criar tabela nova sem RLS\n- Implementar operações CRUD\n</info added on 2025-07-29T16:39:14.342Z>",
+            "status": "done",
+            "testStrategy": "Run integration tests with valid and invalid credentials, and simulate network failures to verify error handling."
+          },
+          {
+            "id": 5,
+            "title": "Add Permission Validation and Robust Error Handling",
+            "description": "Enhance the connection logic to validate user permissions for required operations and implement retry logic for transient connection errors.",
+            "dependencies": [
+              "21.4"
+            ],
+            "details": "Check that the authenticated user has necessary permissions for CRUD operations and add retry mechanisms for temporary failures.\n<info added on 2025-07-29T16:41:37.608Z>\n✅ Módulo CRUD implementado com sucesso!\n\n**Implementações realizadas:**\n- ✅ Classe SupabaseCRUD com todas as operações CRUD\n- ✅ Tratamento robusto de erros com mensagens específicas\n- ✅ Validação de permissões para cada operação\n- ✅ Função withRetry com backoff exponencial\n- ✅ Scripts de teste para validação\n- ✅ Suporte a filtros, paginação e busca\n\n**Funcionalidades implementadas:**\n- CREATE: Inserir novos registros com validação\n- READ: Buscar registros com filtros e paginação\n- READ BY ID: Buscar registro específico\n- UPDATE: Atualizar registros existentes\n- DELETE: Deletar registros (hard/soft delete)\n- COUNT: Contar registros\n- SEARCH: Busca textual em múltiplos campos\n- VALIDATE PERMISSIONS: Testar permissões de cada operação\n\n**Tratamento de erros específicos:**\n- Row Level Security (RLS)\n- Chaves duplicadas\n- Violação de chave estrangeira\n- Campos obrigatórios\n- Erros de rede com retry\n\n**Próximos passos:**\n- Configurar RLS para permitir INSERT\n- Criar tabelas de teste\n- Implementar logs de auditoria\n</info added on 2025-07-29T16:41:37.608Z>",
+            "status": "done",
+            "testStrategy": "Test with users of different permission levels and simulate temporary outages to ensure retry logic and permission checks work as intended."
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "title": "Criar Estrutura do Banco de Dados",
+        "description": "Definir e implementar a estrutura do banco de dados, incluindo tabelas, relacionamentos, índices e constraints.",
+        "details": "1. Criar a tabela principal conforme especificado no PRD usando SQL:\n```sql\nCREATE TABLE IF NOT EXISTS usuarios (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  nome TEXT NOT NULL,\n  email TEXT NOT NULL UNIQUE,\n  criado_em TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n  atualizado_em TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);\n\n-- Criar índices para campos frequentemente consultados\nCREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);\nCREATE INDEX IF NOT EXISTS idx_usuarios_nome ON usuarios(nome);\n\n-- Configurar trigger para atualização automática do campo atualizado_em\nCREATE OR REPLACE FUNCTION trigger_set_timestamp()\nRETURNS TRIGGER AS $$\nBEGIN\n  NEW.atualizado_em = NOW();\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER set_timestamp\nBEFORE UPDATE ON usuarios\nFOR EACH ROW\nEXECUTE FUNCTION trigger_set_timestamp();\n```\n\n2. Implementar tabelas relacionadas conforme necessário (ex: perfis, logs)\n3. Configurar Row Level Security (RLS) para controle de acesso:\n```sql\n-- Habilitar RLS na tabela\nALTER TABLE usuarios ENABLE ROW LEVEL SECURITY;\n\n-- Criar política que permite apenas usuários autenticados visualizarem dados\nCREATE POLICY \"Usuários autenticados podem visualizar\" \nON usuarios FOR SELECT \nUSING (auth.role() = 'authenticated');\n\n-- Criar política que permite apenas o próprio usuário editar seus dados\nCREATE POLICY \"Usuários podem editar apenas seus próprios dados\" \nON usuarios FOR UPDATE \nUSING (auth.uid() = id);\n```\n\n4. Utilizar o Supabase Dashboard ou migrations para aplicar estas alterações\n5. Documentar o esquema do banco de dados em um arquivo markdown",
+        "testStrategy": "1. Verificar se todas as tabelas foram criadas corretamente usando `SELECT * FROM information_schema.tables`\n2. Testar a inserção de dados de exemplo para validar constraints\n3. Verificar se os índices foram criados corretamente usando `SELECT * FROM pg_indexes`\n4. Testar o trigger de atualização automática do campo atualizado_em\n5. Validar as políticas de RLS tentando acessar dados com diferentes níveis de permissão",
+        "priority": "high",
+        "dependencies": [
+          21
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Main and Related Tables",
+            "description": "Define the schema for the main 'usuarios' table and any necessary related tables (such as 'perfis' and 'logs'), specifying columns, data types, primary keys, and foreign key relationships according to the PRD.",
+            "dependencies": [],
+            "details": "Ensure all tables use appropriate data types for efficiency and scalability. Establish relationships between tables using foreign keys where necessary.\n<info added on 2025-07-29T16:44:51.243Z>\nDatabase schema design completed successfully!\n\nThe following tables have been created:\n- `usuarios` (system users)\n- `perfis` (detailed profiles)\n- `categorias` (item organization)\n- `itens` (main entity)\n- `comentarios` (item comments)\n- `anexos` (attached files)\n- `logs_atividade` (audit logs)\n- `sessoes` (active sessions)\n\nEntity relationships established:\n- Users → Profiles (1:1)\n- Users → Items (1:N)\n- Categories → Items (1:N)\n- Items → Comments (1:N)\n- Items → Attachments (1:N)\n\nKey design features:\n- UUIDs as primary keys\n- Automatic timestamps\n- Audit fields\n- Validation constraints\n- Optimized data types\n\nLimitation identified:\n- Tables cannot be created via REST API\n- Must use Supabase Dashboard or CLI\n- Complete SQL schema created in `database-schema.sql`\n\nNext steps:\n- Apply schema via Dashboard\n- Configure indexes and constraints\n- Implement triggers\n</info added on 2025-07-29T16:44:51.243Z>",
+            "status": "done",
+            "testStrategy": "Verify table creation using `SELECT * FROM information_schema.tables`. Check that all columns, keys, and relationships are present and match the PRD."
+          },
+          {
+            "id": 2,
+            "title": "Implement Indexes and Constraints",
+            "description": "Create indexes on frequently queried fields and define necessary constraints (e.g., UNIQUE, NOT NULL, CHECK) to enforce data integrity and optimize query performance.",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "Add indexes to columns such as 'email' and 'nome' in the 'usuarios' table. Define constraints to prevent invalid or duplicate data.",
+            "status": "done",
+            "testStrategy": "Validate index creation with `SELECT * FROM pg_indexes`. Test data insertion to ensure constraints are enforced."
+          },
+          {
+            "id": 3,
+            "title": "Configure Triggers and Automatic Timestamps",
+            "description": "Develop and attach triggers to automate updates of timestamp fields (e.g., 'atualizado_em') and other routine maintenance tasks.",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "Implement a trigger function to update the 'atualizado_em' field on row updates. Attach the trigger to the relevant tables.",
+            "status": "done",
+            "testStrategy": "Update records and confirm that the 'atualizado_em' field is automatically updated as expected."
+          },
+          {
+            "id": 4,
+            "title": "Set Up Row Level Security (RLS) Policies",
+            "description": "Enable Row Level Security on sensitive tables and define policies to restrict data access and modification based on user roles and ownership.",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "Activate RLS on the 'usuarios' table. Create policies to allow only authenticated users to view data and restrict updates to the record owner.",
+            "status": "done",
+            "testStrategy": "Test access with different user roles to ensure policies are enforced. Attempt unauthorized actions to verify restrictions."
+          },
+          {
+            "id": 5,
+            "title": "Apply Schema Changes and Document Database Structure",
+            "description": "Deploy all schema changes using Supabase Dashboard or migrations and document the final database structure in a markdown file for future reference.",
+            "dependencies": [
+              "22.1",
+              "22.2",
+              "22.3",
+              "22.4"
+            ],
+            "details": "Apply all DDL statements in the target environment. Create a markdown document detailing tables, columns, relationships, indexes, triggers, and RLS policies.\n<info added on 2025-07-29T16:58:24.856Z>\n✅ MIGRATION APLICADA COM SUCESSO!\n\n**Resultados da Migration:**\n- Todas as 8 tabelas foram criadas com sucesso no Supabase\n- Índices de performance implementados\n- Triggers automáticos configurados\n- Dados iniciais (categorias padrão) inseridos\n- Teste de inserção de dados funcionando perfeitamente\n\n**Tabelas Criadas:**\n1. ✅ usuarios - Tabela principal de usuários\n2. ✅ perfis - Perfis detalhados dos usuários  \n3. ✅ categorias - Categorias para organização\n4. ✅ itens - Entidade principal do sistema\n5. ✅ comentarios - Sistema de comentários\n6. ✅ anexos - Gerenciamento de arquivos\n7. ✅ logs_atividade - Auditoria de atividades\n8. ✅ sessoes - Controle de sessões\n\n**Funcionalidades Implementadas:**\n- UUID como chaves primárias\n- Relacionamentos com foreign keys\n- Constraints de validação\n- Timestamps automáticos\n- Logs de auditoria automáticos\n- Índices para otimização de consultas\n\n**Próximo Passo:** Implementar operações CRUD usando o módulo SupabaseCRUD já desenvolvido.\n</info added on 2025-07-29T16:58:24.856Z>",
+            "status": "done",
+            "testStrategy": "Review the markdown documentation for completeness and accuracy. Confirm that the deployed schema matches the documented structure."
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "title": "Implementar Operações CREATE",
+        "description": "Desenvolver funções para inserir novos registros no banco de dados com validação adequada.",
+        "status": "done",
+        "dependencies": [
+          22
+        ],
+        "priority": "medium",
+        "details": "1. Criar um módulo para operações de inserção de dados:\n```javascript\nimport { supabase } from './supabaseClient'\n\n/**\n * Insere um novo usuário no banco de dados\n * @param {Object} userData - Dados do usuário a ser inserido\n * @param {string} userData.nome - Nome do usuário\n * @param {string} userData.email - Email do usuário\n * @returns {Promise<Object>} Objeto contendo dados do usuário inserido ou erro\n */\nexport async function createUser({ nome, email }) {\n  // Validação básica dos dados\n  if (!nome || !email) {\n    return { error: { message: 'Nome e email são obrigatórios' } }\n  }\n  \n  if (!email.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/)) {\n    return { error: { message: 'Formato de email inválido' } }\n  }\n\n  try {\n    const { data, error } = await supabase\n      .from('usuarios')\n      .insert([{ nome, email }])\n      .select()\n\n    if (error) throw error\n    \n    return { data: data[0], error: null }\n  } catch (error) {\n    console.error('Erro ao criar usuário:', error)\n    return { \n      data: null, \n      error: { \n        message: error.code === '23505' ? 'Email já cadastrado' : 'Erro ao criar usuário' \n      } \n    }\n  }\n}\n```\n\n2. Implementar validação de dados antes da inserção\n3. Adicionar tratamento para erros comuns (como violação de unicidade)\n4. Considerar implementar transações para operações que afetam múltiplas tabelas\n5. Documentar a API com JSDoc ou similar",
+        "testStrategy": "1. Criar testes unitários para validar o formato dos dados antes da inserção\n2. Testar a inserção de dados válidos e verificar se foram inseridos corretamente\n3. Testar cenários de erro (email duplicado, dados inválidos)\n4. Verificar se os hooks de criado_em são acionados corretamente\n5. Testar a performance com inserção de múltiplos registros",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Desenvolver módulo SupabaseCRUD",
+            "description": "Criar o módulo principal para operações de inserção de dados no Supabase",
+            "status": "completed",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implementar criação de usuários",
+            "description": "Desenvolver função para inserir novos usuários com validação adequada",
+            "status": "completed",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implementar criação de categorias",
+            "description": "Desenvolver função para inserir novas categorias com suporte a relacionamentos",
+            "status": "completed",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implementar criação de itens",
+            "description": "Desenvolver função para inserir novos itens com suporte a foreign keys",
+            "status": "completed",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implementar tratamento de erros",
+            "description": "Adicionar tratamento robusto para erros comuns como violação de unicidade",
+            "status": "completed",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Implementar logs de auditoria automáticos",
+            "description": "Configurar sistema para registrar automaticamente operações de criação",
+            "status": "completed",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Criar scripts de teste",
+            "description": "Desenvolver scripts para testar as operações de criação",
+            "status": "completed",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "Identificar e corrigir triggers problemáticos",
+            "description": "Resolver problemas com triggers que afetavam as operações de criação",
+            "status": "completed",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "title": "Implementar Operações READ",
+        "description": "Desenvolver funções para buscar registros com filtros, paginação e ordenação.",
+        "status": "done",
+        "dependencies": [
+          22
+        ],
+        "priority": "medium",
+        "details": "1. Criar um módulo para operações de leitura de dados:\n```javascript\nimport { supabase } from './supabaseClient'\n\n/**\n * Busca usuários com filtros, paginação e ordenação\n * @param {Object} options - Opções de busca\n * @param {Object} [options.filters] - Filtros a serem aplicados\n * @param {number} [options.page=1] - Página atual\n * @param {number} [options.pageSize=10] - Tamanho da página\n * @param {string} [options.orderBy='criado_em'] - Campo para ordenação\n * @param {boolean} [options.ascending=false] - Ordem ascendente ou descendente\n * @returns {Promise<Object>} Objeto contendo dados e metadados da busca\n */\nexport async function getUsers({\n  filters = {},\n  page = 1,\n  pageSize = 10,\n  orderBy = 'criado_em',\n  ascending = false\n} = {}) {\n  try {\n    // Calcular offset para paginação\n    const from = (page - 1) * pageSize\n    const to = from + pageSize - 1\n\n    // Iniciar query\n    let query = supabase\n      .from('usuarios')\n      .select('*', { count: 'exact' })\n\n    // Aplicar filtros dinâmicos\n    Object.entries(filters).forEach(([key, value]) => {\n      if (value) {\n        if (typeof value === 'string' && key === 'nome') {\n          query = query.ilike(key, `%${value}%`)\n        } else {\n          query = query.eq(key, value)\n        }\n      }\n    })\n\n    // Aplicar ordenação e paginação\n    const { data, error, count } = await query\n      .order(orderBy, { ascending })\n      .range(from, to)\n\n    if (error) throw error\n\n    return { \n      data, \n      error: null,\n      metadata: {\n        totalCount: count,\n        page,\n        pageSize,\n        totalPages: Math.ceil(count / pageSize)\n      }\n    }\n  } catch (error) {\n    console.error('Erro ao buscar usuários:', error)\n    return { \n      data: null, \n      error: { message: 'Erro ao buscar usuários' },\n      metadata: null\n    }\n  }\n}\n\n/**\n * Busca um usuário pelo ID\n * @param {string} id - ID do usuário\n * @returns {Promise<Object>} Objeto contendo dados do usuário ou erro\n */\nexport async function getUserById(id) {\n  try {\n    const { data, error } = await supabase\n      .from('usuarios')\n      .select('*')\n      .eq('id', id)\n      .single()\n\n    if (error) throw error\n\n    return { data, error: null }\n  } catch (error) {\n    console.error(`Erro ao buscar usuário com ID ${id}:`, error)\n    return { \n      data: null, \n      error: { \n        message: error.code === 'PGRST116' ? 'Usuário não encontrado' : 'Erro ao buscar usuário'\n      }\n    }\n  }\n}\n```\n\n2. Implementar cache para consultas frequentes usando Redis ou similar\n3. Otimizar queries para performance\n4. Adicionar suporte para busca de texto completo (full-text search)\n5. Implementar filtros avançados e busca relacional",
+        "testStrategy": "1. Testar a busca com diferentes combinações de filtros\n2. Verificar se a paginação funciona corretamente\n3. Testar a ordenação por diferentes campos\n4. Verificar o desempenho com grandes volumes de dados\n5. Testar a busca por ID com IDs válidos e inválidos\n6. Verificar se as políticas de RLS estão sendo respeitadas nas consultas",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "",
+            "description": "Implementar classe ReadOperations para operações de leitura",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "",
+            "description": "Implementar busca com paginação (page, pageSize)",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "",
+            "description": "Implementar filtros dinâmicos por campos",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "",
+            "description": "Implementar busca por ID único",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "",
+            "description": "Implementar contagem de registros com filtros",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "",
+            "description": "Implementar busca de texto em campos específicos",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "",
+            "description": "Implementar ordenação personalizada",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "",
+            "description": "Implementar tratamento de erros robusto",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 9,
+            "title": "",
+            "description": "Testar busca em todas as tabelas (usuarios, categorias, itens)",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 10,
+            "title": "",
+            "description": "Testar filtros por status, ordem, ativo",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 11,
+            "title": "",
+            "description": "Testar busca por ID em categorias",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 12,
+            "title": "",
+            "description": "Testar contagem de registros",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 13,
+            "title": "",
+            "description": "Testar busca de texto em campos apropriados",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 25,
+        "title": "Implementar Operações UPDATE",
+        "description": "Desenvolver funções para atualizar registros existentes com validação e tratamento de concorrência.",
+        "status": "done",
+        "dependencies": [
+          22
+        ],
+        "priority": "medium",
+        "details": "1. Criar uma classe UpdateOperations para operações de atualização de dados:\n```javascript\nimport { supabase } from './supabaseClient'\n\n/**\n * Classe para gerenciar operações de atualização no banco de dados\n */\nexport class UpdateOperations {\n  /**\n   * Atualiza um registro existente por ID\n   * @param {string} tabela - Nome da tabela\n   * @param {string} id - ID do registro a ser atualizado\n   * @param {Object} updates - Campos a serem atualizados\n   * @param {Object} options - Opções adicionais\n   * @returns {Promise<Object>} Objeto contendo dados atualizados ou erro\n   */\n  static async updateById(tabela, id, updates, options = {}) {\n    // Validação básica\n    if (!id) {\n      return { error: { message: 'ID do registro é obrigatório' } }\n    }\n    \n    if (Object.keys(updates).length === 0) {\n      return { error: { message: 'Nenhum campo para atualizar' } }\n    }\n\n    try {\n      // Verificar se o registro existe antes de atualizar\n      const { data: existingRecord, error: fetchError } = await supabase\n        .from(tabela)\n        .select('id, atualizado_em')\n        .eq('id', id)\n        .single()\n\n      if (fetchError || !existingRecord) {\n        return { error: { message: `Registro não encontrado na tabela ${tabela}` } }\n      }\n\n      // Controle de concorrência com timestamp\n      if (options.version && existingRecord.atualizado_em !== options.version) {\n        return { error: { message: 'Conflito de versão: o registro foi modificado por outro usuário' } }\n      }\n\n      // Realizar a atualização\n      const { data, error } = await supabase\n        .from(tabela)\n        .update({\n          ...updates,\n          atualizado_em: new Date().toISOString()\n        })\n        .eq('id', id)\n        .select()\n\n      if (error) throw error\n\n      return { data: data[0], error: null }\n    } catch (error) {\n      console.error(`Erro ao atualizar registro com ID ${id} na tabela ${tabela}:`, error)\n      return { \n        data: null, \n        error: { \n          message: error.code === '23505' ? 'Violação de restrição única' : `Erro ao atualizar registro: ${error.message}` \n        } \n      }\n    }\n  }\n\n  /**\n   * Atualiza múltiplos registros com base em filtros\n   * @param {string} tabela - Nome da tabela\n   * @param {Object} filtros - Filtros para selecionar registros\n   * @param {Object} updates - Campos a serem atualizados\n   * @returns {Promise<Object>} Objeto contendo quantidade de registros atualizados ou erro\n   */\n  static async updateWithFilters(tabela, filtros, updates) {\n    if (Object.keys(updates).length === 0) {\n      return { error: { message: 'Nenhum campo para atualizar' } }\n    }\n\n    try {\n      let query = supabase.from(tabela).update(updates)\n      \n      // Aplicar filtros\n      Object.entries(filtros).forEach(([campo, valor]) => {\n        query = query.eq(campo, valor)\n      })\n\n      const { data, error, count } = await query.select()\n\n      if (error) throw error\n\n      return { data, count, error: null }\n    } catch (error) {\n      console.error(`Erro ao atualizar registros na tabela ${tabela}:`, error)\n      return { data: null, count: 0, error: { message: `Erro ao atualizar registros: ${error.message}` } }\n    }\n  }\n\n  /**\n   * Atualiza um campo específico de um registro\n   * @param {string} tabela - Nome da tabela\n   * @param {string} id - ID do registro\n   * @param {string} campo - Nome do campo a ser atualizado\n   * @param {any} valor - Novo valor do campo\n   * @returns {Promise<Object>} Objeto contendo dados atualizados ou erro\n   */\n  static async updateField(tabela, id, campo, valor) {\n    return this.updateById(tabela, id, { [campo]: valor })\n  }\n}\n```\n\n2. Implementação de controle de concorrência (optimistic locking) usando timestamps\n3. Sistema de rollback automático em caso de erro durante a atualização\n4. Logs de auditoria para rastrear todas as mudanças realizadas\n5. Validação específica para diferentes tipos de campos e tabelas\n6. Suporte para atualizações parciais e múltiplas com filtros",
+        "testStrategy": "1. Testar a atualização de diferentes campos individualmente\n2. Verificar se o campo atualizado_em é atualizado automaticamente\n3. Testar cenários de erro (ID inexistente, violação de restrição única)\n4. Verificar se as políticas de RLS estão sendo respeitadas nas atualizações\n5. Testar atualizações concorrentes para garantir consistência dos dados\n6. Testar o sistema de rollback automático em caso de erro\n7. Verificar a atualização múltipla com diferentes filtros\n8. Testar a atualização de campo específico\n9. Validar o controle de concorrência com timestamps",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "",
+            "description": "Implementar classe UpdateOperations com método updateById",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "",
+            "description": "Implementar método updateWithFilters para atualizações com filtros",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "",
+            "description": "Implementar método updateField para atualização de campo específico",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "",
+            "description": "Implementar controle de concorrência usando timestamps",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "",
+            "description": "Implementar sistema de rollback automático em caso de erro",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "",
+            "description": "Implementar validação de dados antes da atualização",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "",
+            "description": "Implementar logs de auditoria automáticos",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "",
+            "description": "Testar atualização de categorias com filtros",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 9,
+            "title": "",
+            "description": "Testar atualização de campo específico (icone)",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 10,
+            "title": "",
+            "description": "Testar controle de concorrência com versões",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 11,
+            "title": "",
+            "description": "Testar rollback automático",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 12,
+            "title": "",
+            "description": "Implementar tratamento de erros robusto",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 26,
+        "title": "Implementar Operações DELETE",
+        "description": "Desenvolver funções para remover registros com validação de permissões e integridade referencial.",
+        "status": "done",
+        "dependencies": [
+          22
+        ],
+        "priority": "medium",
+        "details": "Classe DeleteOperations implementada com as seguintes funcionalidades:\n\n1. Exclusão por ID com verificação de existência:\n```javascript\nasync deleteById(tabela, id) {\n  if (!id) {\n    return { error: { message: 'ID é obrigatório' } }\n  }\n\n  try {\n    // Verificar se o registro existe\n    const { data: existingRecord, error: fetchError } = await supabase\n      .from(tabela)\n      .select('id')\n      .eq('id', id)\n      .single()\n\n    if (fetchError || !existingRecord) {\n      return { error: { message: 'Registro não encontrado' } }\n    }\n\n    // Realizar a exclusão\n    const { error } = await supabase\n      .from(tabela)\n      .delete()\n      .eq('id', id)\n\n    if (error) throw error\n\n    return { success: true, error: null }\n  } catch (error) {\n    console.error(`Erro ao remover registro com ID ${id}:`, error)\n    return { \n      success: false, \n      error: { \n        message: error.code === '23503' ? 'Não é possível excluir: existem registros relacionados' : `Erro ao remover registro de ${tabela}` \n      } \n    }\n  }\n}\n```\n\n2. Soft delete (marcar como inativo):\n```javascript\nasync softDelete(tabela, id) {\n  if (!id) {\n    return { error: { message: 'ID é obrigatório' } }\n  }\n\n  try {\n    const { data, error } = await supabase\n      .from(tabela)\n      .update({ ativo: false, atualizado_em: new Date().toISOString() })\n      .eq('id', id)\n      .select()\n\n    if (error) throw error\n\n    return { success: true, data: data[0], error: null }\n  } catch (error) {\n    console.error(`Erro ao realizar soft delete do registro com ID ${id}:`, error)\n    return { \n      success: false, \n      error: { message: `Erro ao marcar registro de ${tabela} como inativo` } \n    }\n  }\n}\n```\n\n3. Restauração de registros (reativar):\n```javascript\nasync restoreRecord(tabela, id) {\n  if (!id) {\n    return { error: { message: 'ID é obrigatório' } }\n  }\n\n  try {\n    const { data, error } = await supabase\n      .from(tabela)\n      .update({ ativo: true, atualizado_em: new Date().toISOString() })\n      .eq('id', id)\n      .select()\n\n    if (error) throw error\n\n    return { success: true, data: data[0], error: null }\n  } catch (error) {\n    console.error(`Erro ao restaurar registro com ID ${id}:`, error)\n    return { \n      success: false, \n      error: { message: `Erro ao reativar registro de ${tabela}` } \n    }\n  }\n}\n```\n\n4. Verificação de dependências antes da exclusão:\n```javascript\nasync checkDependencies(tabela, id) {\n  // Mapeamento de tabelas e suas dependências\n  const dependencyMap = {\n    'categorias': ['produtos'],\n    'produtos': ['itens_pedido'],\n    // Adicionar outras relações conforme necessário\n  }\n\n  const dependencies = dependencyMap[tabela] || []\n  const results = {}\n\n  try {\n    for (const depTable of dependencies) {\n      const { count, error } = await supabase\n        .from(depTable)\n        .select('*', { count: 'exact', head: true })\n        .eq(`${tabela.slice(0, -1)}_id`, id)\n\n      if (error) throw error\n      results[depTable] = count\n    }\n\n    return { success: true, dependencies: results }\n  } catch (error) {\n    console.error(`Erro ao verificar dependências para ${tabela} ID ${id}:`, error)\n    return { \n      success: false, \n      error: { message: 'Erro ao verificar dependências' } \n    }\n  }\n}\n```\n\n5. Exclusão em cascata com validação:\n```javascript\nasync cascadeDelete(tabela, id, options = { force: false }) {\n  // Verificar dependências\n  const { success, dependencies, error } = await this.checkDependencies(tabela, id)\n  \n  if (!success) return { error }\n  \n  // Se houver dependências e não for forçado, retornar erro\n  const hasDependencies = Object.values(dependencies).some(count => count > 0)\n  if (hasDependencies && !options.force) {\n    return {\n      success: false,\n      error: { \n        message: 'Existem registros dependentes. Use force: true para exclusão em cascata.',\n        dependencies\n      }\n    }\n  }\n  \n  // Iniciar transação para exclusão em cascata\n  try {\n    // Implementação da exclusão em cascata\n    // Código omitido por brevidade\n    \n    return { success: true }\n  } catch (error) {\n    console.error(`Erro na exclusão em cascata para ${tabela} ID ${id}:`, error)\n    return { \n      success: false, \n      error: { message: 'Erro ao realizar exclusão em cascata' } \n    }\n  }\n}\n```\n\n6. Exclusão múltipla com filtros:\n```javascript\nasync deleteMany(tabela, filtros) {\n  if (!filtros || Object.keys(filtros).length === 0) {\n    return { error: { message: 'Filtros são obrigatórios para exclusão múltipla' } }\n  }\n\n  try {\n    let query = supabase.from(tabela).delete()\n    \n    // Aplicar filtros\n    Object.entries(filtros).forEach(([campo, valor]) => {\n      query = query.eq(campo, valor)\n    })\n    \n    const { data, error, count } = await query.select()\n\n    if (error) throw error\n\n    return { success: true, count, data, error: null }\n  } catch (error) {\n    console.error(`Erro ao remover registros com filtros:`, error)\n    return { \n      success: false, \n      error: { message: `Erro ao remover registros de ${tabela}` } \n    }\n  }\n}\n```",
+        "testStrategy": "1. Testar a exclusão de registros existentes\n   - Verificar se a exclusão por ID funciona corretamente\n   - Testar a exclusão com filtros múltiplos\n\n2. Verificar se a exclusão respeita as constraints de chave estrangeira\n   - Testar a verificação de dependências\n   - Verificar se a exclusão em cascata funciona corretamente\n\n3. Testar tentativas de exclusão de registros inexistentes\n   - Verificar se retorna erro apropriado\n\n4. Verificar se as políticas de RLS estão sendo respeitadas nas exclusões\n   - Testar exclusões com diferentes perfis de usuário\n\n5. Testar o soft delete e verificar se os registros marcados como excluídos não aparecem em consultas regulares\n   - Verificar se o campo 'ativo' é atualizado corretamente\n   - Testar a restauração de registros inativos\n\n6. Testar o tratamento de erros\n   - Verificar se erros de banco de dados são tratados adequadamente\n   - Testar mensagens de erro personalizadas\n\n7. Testar a exclusão em cascata\n   - Verificar se todas as dependências são removidas corretamente\n   - Testar o parâmetro force para forçar exclusão em cascata",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "",
+            "description": "Implementar exclusão por ID com verificação de existência",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "",
+            "description": "Implementar soft delete (marcar como inativo)",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "",
+            "description": "Implementar restauração de registros (reativar)",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "",
+            "description": "Implementar verificação de dependências antes da exclusão",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "",
+            "description": "Implementar exclusão em cascata com validação",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "",
+            "description": "Implementar exclusão múltipla com filtros",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "",
+            "description": "Implementar tratamento de erros robusto",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "",
+            "description": "Implementar logs de auditoria automáticos",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 27,
+        "title": "Implementar Logs de Auditoria",
+        "description": "Desenvolver sistema de logs para rastrear todas as operações realizadas no banco de dados.",
+        "status": "in-progress",
+        "dependencies": [
+          23,
+          24,
+          25,
+          26
+        ],
+        "priority": "low",
+        "details": "1. Criar tabela de auditoria no Supabase:\n```sql\nCREATE TABLE IF NOT EXISTS audit_logs (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  tabela TEXT NOT NULL,\n  operacao TEXT NOT NULL,\n  registro_id UUID NOT NULL,\n  dados_antigos JSONB,\n  dados_novos JSONB,\n  usuario_id UUID,\n  ip_address TEXT,\n  timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);\n\n-- Criar índices para performance\nCREATE INDEX IF NOT EXISTS idx_audit_logs_tabela ON audit_logs(tabela);\nCREATE INDEX IF NOT EXISTS idx_audit_logs_operacao ON audit_logs(operacao);\nCREATE INDEX IF NOT EXISTS idx_audit_logs_registro_id ON audit_logs(registro_id);\nCREATE INDEX IF NOT EXISTS idx_audit_logs_timestamp ON audit_logs(timestamp);\n```\n\n2. Implementar função para registrar logs de auditoria:\n```javascript\nimport { supabase } from './supabaseClient'\n\n/**\n * Registra uma operação no log de auditoria\n * @param {Object} logData - Dados do log\n * @param {string} logData.tabela - Nome da tabela afetada\n * @param {string} logData.operacao - Tipo de operação (INSERT, UPDATE, DELETE)\n * @param {string} logData.registro_id - ID do registro afetado\n * @param {Object} [logData.dados_antigos] - Estado anterior do registro\n * @param {Object} [logData.dados_novos] - Novo estado do registro\n * @param {string} [logData.ip_address] - Endereço IP do cliente\n * @returns {Promise<Object>} Resultado da operação\n */\nexport async function registrarAuditoria({\n  tabela,\n  operacao,\n  registro_id,\n  dados_antigos = null,\n  dados_novos = null,\n  ip_address = null\n}) {\n  try {\n    // Obter ID do usuário atual do contexto de autenticação\n    const { data: { user } } = await supabase.auth.getUser()\n    const usuario_id = user?.id\n\n    const { data, error } = await supabase\n      .from('audit_logs')\n      .insert({\n        tabela,\n        operacao,\n        registro_id,\n        dados_antigos,\n        dados_novos,\n        usuario_id,\n        ip_address\n      })\n\n    if (error) throw error\n    return { success: true, error: null }\n  } catch (error) {\n    console.error('Erro ao registrar log de auditoria:', error)\n    // Não propagar erro para não interromper operações principais\n    return { success: false, error: { message: 'Erro ao registrar auditoria' } }\n  }\n}\n\n/**\n * Busca logs de auditoria com filtros\n * @param {Object} options - Opções de busca\n * @returns {Promise<Object>} Logs de auditoria\n */\nexport async function buscarLogsAuditoria({\n  tabela = null,\n  operacao = null,\n  registro_id = null,\n  usuario_id = null,\n  dataInicio = null,\n  dataFim = null,\n  page = 1,\n  pageSize = 20\n} = {}) {\n  try {\n    const from = (page - 1) * pageSize\n    const to = from + pageSize - 1\n\n    let query = supabase\n      .from('audit_logs')\n      .select('*', { count: 'exact' })\n\n    if (tabela) query = query.eq('tabela', tabela)\n    if (operacao) query = query.eq('operacao', operacao)\n    if (registro_id) query = query.eq('registro_id', registro_id)\n    if (usuario_id) query = query.eq('usuario_id', usuario_id)\n    if (dataInicio) query = query.gte('timestamp', dataInicio)\n    if (dataFim) query = query.lte('timestamp', dataFim)\n\n    const { data, error, count } = await query\n      .order('timestamp', { ascending: false })\n      .range(from, to)\n\n    if (error) throw error\n\n    return { \n      data, \n      error: null,\n      metadata: {\n        totalCount: count,\n        page,\n        pageSize,\n        totalPages: Math.ceil(count / pageSize)\n      }\n    }\n  } catch (error) {\n    console.error('Erro ao buscar logs de auditoria:', error)\n    return { \n      data: null, \n      error: { message: 'Erro ao buscar logs de auditoria' },\n      metadata: null\n    }\n  }\n}\n```\n\n3. Integrar logs de auditoria com as operações CRUD\n4. Implementar mecanismo para limpar logs antigos (retenção de dados)\n5. Adicionar interface para visualização e filtragem de logs",
+        "testStrategy": "1. Testar o registro de logs para cada tipo de operação (CREATE, READ, UPDATE, DELETE)\n2. Verificar se os dados antigos e novos são registrados corretamente nas operações de atualização\n3. Testar a busca de logs com diferentes combinações de filtros\n4. Verificar a performance do sistema com grande volume de logs\n5. Testar a política de retenção de logs",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implementar classe AuditOperations",
+            "description": "Desenvolver a classe AuditOperations para gerenciar todas as operações de auditoria no sistema.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implementar registro de logs para operações CREATE",
+            "description": "Integrar o sistema de logs com as operações de criação de registros.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implementar registro de logs para operações UPDATE",
+            "description": "Integrar o sistema de logs com as operações de atualização de registros, capturando dados antigos e novos.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implementar registro de logs para operações DELETE",
+            "description": "Integrar o sistema de logs com as operações de exclusão de registros.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implementar busca de logs com filtros múltiplos",
+            "description": "Desenvolver funcionalidade para buscar logs com diferentes combinações de filtros.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Implementar contagem de logs por tipo de ação",
+            "description": "Adicionar funcionalidade para contar logs por tipo de operação (CREATE, UPDATE, DELETE).",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Implementar busca de logs por registro específico",
+            "description": "Desenvolver funcionalidade para buscar todos os logs relacionados a um registro específico.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "Implementar sistema de limpeza de logs antigos",
+            "description": "Criar mecanismo para limpar logs antigos conforme política de retenção de dados.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 9,
+            "title": "Integrar sistema de auditoria com Taskmaster MCP",
+            "description": "Integrar o sistema de logs de auditoria com o módulo principal do Taskmaster.",
+            "status": "done",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 10,
+            "title": "Documentar sistema de auditoria",
+            "description": "Criar documentação completa do sistema de logs de auditoria, incluindo exemplos de uso e casos de teste.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "title": "Integrar com Taskmaster MCP e Documentar",
+        "description": "Organizar tarefas no Taskmaster MCP e criar documentação completa do sistema.",
+        "details": "1. Organizar tarefas no Taskmaster MCP:\n   - Criar estrutura de tarefas para cada componente do sistema\n   - Definir dependências entre tarefas\n   - Atribuir prioridades e prazos\n\n2. Criar documentação técnica completa:\n   - README.md com visão geral do projeto\n   - Documentação da API com exemplos de uso\n   - Diagrama ER do banco de dados\n   - Guia de instalação e configuração\n\n3. Documentar a estrutura do banco de dados:\n```markdown\n# Estrutura do Banco de Dados\n\n## Tabela: usuarios\n\n| Campo | Tipo | Descrição |\n|-------|------|----------|\n| id | UUID | Identificador único do usuário (PK) |\n| nome | TEXT | Nome completo do usuário |\n| email | TEXT | Email do usuário (UNIQUE) |\n| criado_em | TIMESTAMP | Data de criação do registro |\n| atualizado_em | TIMESTAMP | Data da última atualização |\n| deletado_em | TIMESTAMP | Data de exclusão lógica (null = ativo) |\n\n## Tabela: audit_logs\n\n| Campo | Tipo | Descrição |\n|-------|------|----------|\n| id | UUID | Identificador único do log (PK) |\n| tabela | TEXT | Nome da tabela afetada |\n| operacao | TEXT | Tipo de operação (INSERT, UPDATE, DELETE) |\n| registro_id | UUID | ID do registro afetado |\n| dados_antigos | JSONB | Estado anterior do registro |\n| dados_novos | JSONB | Novo estado do registro |\n| usuario_id | UUID | ID do usuário que realizou a operação |\n| ip_address | TEXT | Endereço IP do cliente |\n| timestamp | TIMESTAMP | Data e hora da operação |\n```\n\n4. Criar exemplos de uso para cada operação CRUD:\n```javascript\n// Exemplo de criação de usuário\nconst { data, error } = await createUser({\n  nome: 'João Silva',\n  email: 'joao@exemplo.com'\n})\n\n// Exemplo de busca com filtros\nconst { data, metadata } = await getUsers({\n  filters: { nome: 'Silva' },\n  page: 1,\n  pageSize: 10,\n  orderBy: 'nome',\n  ascending: true\n})\n\n// Exemplo de atualização\nconst { data, error } = await updateUser('123e4567-e89b-12d3-a456-426614174000', {\n  nome: 'João Silva Santos'\n})\n\n// Exemplo de exclusão\nconst { success, error } = await deleteUser('123e4567-e89b-12d3-a456-426614174000')\n```\n\n5. Criar scripts de migração para facilitar a implantação\n6. Documentar políticas de segurança e boas práticas",
+        "testStrategy": "1. Verificar se toda a documentação está completa e atualizada\n2. Validar se os exemplos de código funcionam conforme documentado\n3. Testar os scripts de migração em um ambiente limpo\n4. Revisar a documentação com outros membros da equipe para garantir clareza\n5. Verificar se todas as tarefas estão corretamente organizadas no Taskmaster MCP",
+        "priority": "low",
+        "dependencies": [
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 29,
+        "title": "Criar página de Conversas com estatísticas",
+        "description": "Desenvolver página de conversas exibindo total de contatos e mensagens não lidas, usando componentes shadcn/ui e seguindo design system da aplicação",
+        "details": "Página deve incluir: 1) Dashboard com estatísticas (total de contatos, não lidos) 2) Lista de conversas com preview 3) Design responsivo 4) Integração com cores do Admin/Sidebar",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Page Structure and Routing",
+            "description": "Create the base page for Conversas within the application, ensuring correct routing and layout integration with the existing Admin/Sidebar structure.",
+            "dependencies": [],
+            "details": "Define a new route for the Conversas page. Use the application's layout system to embed the page within the Admin/Sidebar context. Ensure the page uses the design system's base layout components for consistency.",
+            "status": "pending",
+            "testStrategy": "Navigate to the new route and verify the page renders within the correct layout and sidebar context."
+          },
+          {
+            "id": 2,
+            "title": "Integrate shadcn/ui and Configure Theme",
+            "description": "Install and configure shadcn/ui components, ensuring theme colors and styles match the Admin/Sidebar palette.",
+            "dependencies": [
+              "29.1"
+            ],
+            "details": "Install shadcn/ui if not already present. Configure the theme to inherit or override colors and typography to match the Admin/Sidebar. Test with sample components to confirm visual consistency.",
+            "status": "pending",
+            "testStrategy": "Render sample shadcn/ui components and visually confirm theme alignment with the Admin/Sidebar."
+          },
+          {
+            "id": 3,
+            "title": "Implement Dashboard Statistics Component",
+            "description": "Develop a dashboard section displaying total contacts and unread messages, using shadcn/ui components and fetching data from the backend.",
+            "dependencies": [
+              "29.2"
+            ],
+            "details": "Create a statistics card or dashboard widget using shadcn/ui primitives. Fetch total contacts and unread message counts from the backend (using existing READ operations). Display the values with clear labels and icons.",
+            "status": "pending",
+            "testStrategy": "Mock backend responses and verify correct display of statistics. Test with edge cases (zero, large numbers)."
+          },
+          {
+            "id": 4,
+            "title": "Build Conversations List with Preview",
+            "description": "Develop a scrollable list of conversations, each showing contact name, last message preview, timestamp, and unread indicator, using shadcn/ui list components.",
+            "dependencies": [
+              "29.3"
+            ],
+            "details": "Fetch conversation data from the backend. For each conversation, render a list item with avatar, contact name, last message snippet, time, and unread badge if applicable. Use shadcn/ui List, Avatar, and Badge components.",
+            "status": "pending",
+            "testStrategy": "Verify the list renders correct data, updates on new messages, and unread indicators display as expected."
+          },
+          {
+            "id": 5,
+            "title": "Implement Responsive Design",
+            "description": "Ensure the Conversas page and all components adapt gracefully to different screen sizes, following the application's responsive design guidelines.",
+            "dependencies": [
+              "29.4"
+            ],
+            "details": "Apply responsive utility classes (e.g., Tailwind) and test shadcn/ui components for mobile, tablet, and desktop layouts. Adjust spacing, font sizes, and component arrangement as needed for usability.",
+            "status": "pending",
+            "testStrategy": "Test the page on various device sizes using browser dev tools. Confirm all elements remain accessible and visually coherent."
+          },
+          {
+            "id": 6,
+            "title": "Integrate Real-Time Updates for Conversations",
+            "description": "Enable real-time updates for the conversations list and statistics, so new messages and status changes appear without manual refresh.",
+            "dependencies": [
+              "29.5"
+            ],
+            "details": "Use Supabase subscriptions or another real-time mechanism to listen for new messages and status changes. Update the UI state accordingly when events are received.",
+            "status": "pending",
+            "testStrategy": "Simulate incoming messages and verify the UI updates in real time without page reload."
+          },
+          {
+            "id": 7,
+            "title": "Finalize UI Polish and Accessibility",
+            "description": "Refine visual details, ensure accessibility compliance, and perform final QA to match the design system and user experience standards.",
+            "dependencies": [
+              "29.6"
+            ],
+            "details": "Review spacing, colors, and typography for consistency. Add ARIA labels and keyboard navigation support. Test with screen readers. Address any visual or usability bugs found during QA.",
+            "status": "pending",
+            "testStrategy": "Run accessibility audits, perform manual QA, and verify all acceptance criteria are met."
+          }
+        ]
+      },
+      {
+        "id": 30,
+        "title": "Create Tabelas page with Data Table",
+        "description": "Implement a comprehensive data table page using shadcn/ui components with filtering, sorting, pagination, and row selection capabilities",
+        "details": "Build a Tabelas page using the DataTableDemo component structure. Include: 1) AdminLayout integration 2) Sample payment data 3) Filtering by email/status 4) Sorting by amount/date 5) Pagination controls 6) Row selection with checkboxes 7) Action dropdown menu per row 8) Responsive design",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 31,
+        "title": "Implementar componente Alert com ícones personalizados",
+        "description": "Implementar o componente Alert do shadcn/ui com os ícones lucide-react (AlertCircleIcon, CheckCircle2Icon, PopcornIcon) e criar demonstração funcional com diferentes variantes",
+        "details": "Criar componente AlertDemo com as seguintes funcionalidades:\n- Alert success com CheckCircle2Icon\n- Alert info com PopcornIcon  \n- Alert destructive com AlertCircleIcon\n- Suporte para AlertTitle e AlertDescription\n- Demonstração responsiva com grid layout\n- Integrar em páginas apropriadas do sistema para feedback ao usuário",
+        "testStrategy": "Verificar renderização correta dos três tipos de alerta, responsividade em diferentes tamanhos de tela, e integração com estados de sucesso/erro/informação",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Criar componente AlertDemo com ícones lucide-react",
+            "description": "Desenvolver o componente AlertDemo conforme o exemplo fornecido, incluindo todos os três tipos de alerta (success, info, destructive) com os ícones especificados",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 31
+          },
+          {
+            "id": 2,
+            "title": "Integrar alerts em páginas de CRUD para feedback",
+            "description": "Adicionar componentes Alert nas páginas de criação, leitura, atualização e exclusão para fornecer feedback visual ao usuário sobre o status das operações",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 31
+          },
+          {
+            "id": 3,
+            "title": "Criar hook/useAlert para gerenciamento de estados de alerta",
+            "description": "Criar utilitário para gerenciar estados de alerta globalmente, permitindo que diferentes partes da aplicação exibam alerts dinamicamente",
+            "details": "Implementar hook customizado para gerenciar alerts de forma centralizada, incluindo funções para mostrar/ocultar alerts e configurar tipos/mensagens",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 31
+          }
+        ]
+      },
+      {
+        "id": 32,
+        "title": "Install Command Component Dependencies",
+        "description": "Install required npm packages for the Command component: cmdk, @radix-ui/react-icons, @radix-ui/react-dialog",
+        "details": "Run npm install cmdk @radix-ui/react-icons @radix-ui/react-dialog to install the necessary packages for the Command component integration.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 33,
+        "title": "Create Command Component",
+        "description": "Create the Command component in /components/ui/command.tsx with full cmdk functionality including Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator, and CommandShortcut components",
+        "details": "Copy the provided Command component code to /components/ui/command.tsx, ensuring all TypeScript types are properly defined and the component follows shadcn/ui new-york styling conventions.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 34,
+        "title": "Create Dialog Component",
+        "description": "Create the Dialog component in /components/ui/dialog.tsx if it doesn't exist, including Dialog, DialogTrigger, DialogPortal, DialogClose, DialogOverlay, DialogContent, DialogHeader, DialogFooter, DialogTitle, and DialogDescription components",
+        "details": "Ensure the Dialog component follows shadcn/ui new-york styling and includes proper TypeScript types. This is required for the CommandDialog component to work properly.",
+        "testStrategy": "",
+        "status": "in-progress",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 35,
+        "title": "Create Command Demo Component",
+        "description": "Create the Command demo component in /components/ui/command-demo.tsx with keyboard shortcut functionality, including search, quick actions, and navigation commands",
+        "details": "Implement the demo component with ⌘K/Ctrl+K keyboard shortcut, search functionality, quick actions (New folder, Import document, Add block), and navigation shortcuts (Dashboard, Apps, Connections).",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 37,
+        "title": "Test Command Component Functionality",
+        "description": "Test the Command component functionality including keyboard shortcuts, search, quick actions, and navigation commands",
+        "details": "Verify that the Command dialog opens with ⌘K/Ctrl+K, all quick start commands work correctly, navigation commands redirect properly, and there are no console warnings or errors.",
+        "testStrategy": "",
+        "status": "in-progress",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 38,
+        "title": "Integrate Command Demo in Top-Right Corner",
+        "description": "Integrate the Command demo component in the top-right corner of the application (header area) with a fixed positioned button and global ⌘K keyboard shortcut",
+        "details": "Position the Command demo component in the top-right corner of the application header with a fixed/sticky button. Ensure it works globally across the entire application and maintains the ⌘K keyboard shortcut functionality.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-24T19:41:12.971Z",
+      "updated": "2025-08-19T16:47:39.449Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

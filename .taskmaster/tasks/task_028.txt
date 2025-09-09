@@ -1,0 +1,83 @@
+# Task ID: 28
+# Title: Integrar com Taskmaster MCP e Documentar
+# Status: pending
+# Dependencies: 21, 22, 23, 24, 25, 26, 27
+# Priority: low
+# Description: Organizar tarefas no Taskmaster MCP e criar documentação completa do sistema.
+# Details:
+1. Organizar tarefas no Taskmaster MCP:
+   - Criar estrutura de tarefas para cada componente do sistema
+   - Definir dependências entre tarefas
+   - Atribuir prioridades e prazos
+
+2. Criar documentação técnica completa:
+   - README.md com visão geral do projeto
+   - Documentação da API com exemplos de uso
+   - Diagrama ER do banco de dados
+   - Guia de instalação e configuração
+
+3. Documentar a estrutura do banco de dados:
+```markdown
+# Estrutura do Banco de Dados
+
+## Tabela: usuarios
+
+| Campo | Tipo | Descrição |
+|-------|------|----------|
+| id | UUID | Identificador único do usuário (PK) |
+| nome | TEXT | Nome completo do usuário |
+| email | TEXT | Email do usuário (UNIQUE) |
+| criado_em | TIMESTAMP | Data de criação do registro |
+| atualizado_em | TIMESTAMP | Data da última atualização |
+| deletado_em | TIMESTAMP | Data de exclusão lógica (null = ativo) |
+
+## Tabela: audit_logs
+
+| Campo | Tipo | Descrição |
+|-------|------|----------|
+| id | UUID | Identificador único do log (PK) |
+| tabela | TEXT | Nome da tabela afetada |
+| operacao | TEXT | Tipo de operação (INSERT, UPDATE, DELETE) |
+| registro_id | UUID | ID do registro afetado |
+| dados_antigos | JSONB | Estado anterior do registro |
+| dados_novos | JSONB | Novo estado do registro |
+| usuario_id | UUID | ID do usuário que realizou a operação |
+| ip_address | TEXT | Endereço IP do cliente |
+| timestamp | TIMESTAMP | Data e hora da operação |
+```
+
+4. Criar exemplos de uso para cada operação CRUD:
+```javascript
+// Exemplo de criação de usuário
+const { data, error } = await createUser({
+  nome: 'João Silva',
+  email: 'joao@exemplo.com'
+})
+
+// Exemplo de busca com filtros
+const { data, metadata } = await getUsers({
+  filters: { nome: 'Silva' },
+  page: 1,
+  pageSize: 10,
+  orderBy: 'nome',
+  ascending: true
+})
+
+// Exemplo de atualização
+const { data, error } = await updateUser('123e4567-e89b-12d3-a456-426614174000', {
+  nome: 'João Silva Santos'
+})
+
+// Exemplo de exclusão
+const { success, error } = await deleteUser('123e4567-e89b-12d3-a456-426614174000')
+```
+
+5. Criar scripts de migração para facilitar a implantação
+6. Documentar políticas de segurança e boas práticas
+
+# Test Strategy:
+1. Verificar se toda a documentação está completa e atualizada
+2. Validar se os exemplos de código funcionam conforme documentado
+3. Testar os scripts de migração em um ambiente limpo
+4. Revisar a documentação com outros membros da equipe para garantir clareza
+5. Verificar se todas as tarefas estão corretamente organizadas no Taskmaster MCP

@@ -1,0 +1,11 @@
+# Task ID: 30
+# Title: Create Tabelas page with Data Table
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Implement a comprehensive data table page using shadcn/ui components with filtering, sorting, pagination, and row selection capabilities
+# Details:
+Build a Tabelas page using the DataTableDemo component structure. Include: 1) AdminLayout integration 2) Sample payment data 3) Filtering by email/status 4) Sorting by amount/date 5) Pagination controls 6) Row selection with checkboxes 7) Action dropdown menu per row 8) Responsive design
+
+# Test Strategy:
+

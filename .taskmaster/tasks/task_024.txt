@@ -1,0 +1,196 @@
+# Task ID: 24
+# Title: Implementar Operações READ
+# Status: done
+# Dependencies: 22
+# Priority: medium
+# Description: Desenvolver funções para buscar registros com filtros, paginação e ordenação.
+# Details:
+1. Criar um módulo para operações de leitura de dados:
+```javascript
+import { supabase } from './supabaseClient'
+
+/**
+ * Busca usuários com filtros, paginação e ordenação
+ * @param {Object} options - Opções de busca
+ * @param {Object} [options.filters] - Filtros a serem aplicados
+ * @param {number} [options.page=1] - Página atual
+ * @param {number} [options.pageSize=10] - Tamanho da página
+ * @param {string} [options.orderBy='criado_em'] - Campo para ordenação
+ * @param {boolean} [options.ascending=false] - Ordem ascendente ou descendente
+ * @returns {Promise<Object>} Objeto contendo dados e metadados da busca
+ */
+export async function getUsers({
+  filters = {},
+  page = 1,
+  pageSize = 10,
+  orderBy = 'criado_em',
+  ascending = false
+} = {}) {
+  try {
+    // Calcular offset para paginação
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    // Iniciar query
+    let query = supabase
+      .from('usuarios')
+      .select('*', { count: 'exact' })
+
+    // Aplicar filtros dinâmicos
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        if (typeof value === 'string' && key === 'nome') {
+          query = query.ilike(key, `%${value}%`)
+        } else {
+          query = query.eq(key, value)
+        }
+      }
+    })
+
+    // Aplicar ordenação e paginação
+    const { data, error, count } = await query
+      .order(orderBy, { ascending })
+      .range(from, to)
+
+    if (error) throw error
+
+    return { 
+      data, 
+      error: null,
+      metadata: {
+        totalCount: count,
+        page,
+        pageSize,
+        totalPages: Math.ceil(count / pageSize)
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error)
+    return { 
+      data: null, 
+      error: { message: 'Erro ao buscar usuários' },
+      metadata: null
+    }
+  }
+}
+
+/**
+ * Busca um usuário pelo ID
+ * @param {string} id - ID do usuário
+ * @returns {Promise<Object>} Objeto contendo dados do usuário ou erro
+ */
+export async function getUserById(id) {
+  try {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) throw error
+
+    return { data, error: null }
+  } catch (error) {
+    console.error(`Erro ao buscar usuário com ID ${id}:`, error)
+    return { 
+      data: null, 
+      error: { 
+        message: error.code === 'PGRST116' ? 'Usuário não encontrado' : 'Erro ao buscar usuário'
+      }
+    }
+  }
+}
+```
+
+2. Implementar cache para consultas frequentes usando Redis ou similar
+3. Otimizar queries para performance
+4. Adicionar suporte para busca de texto completo (full-text search)
+5. Implementar filtros avançados e busca relacional
+
+# Test Strategy:
+1. Testar a busca com diferentes combinações de filtros
+2. Verificar se a paginação funciona corretamente
+3. Testar a ordenação por diferentes campos
+4. Verificar o desempenho com grandes volumes de dados
+5. Testar a busca por ID com IDs válidos e inválidos
+6. Verificar se as políticas de RLS estão sendo respeitadas nas consultas
+
+# Subtasks:
+## 1.  [done]
+### Dependencies: None
+### Description: Implementar classe ReadOperations para operações de leitura
+### Details:
+
+
+## 2.  [done]
+### Dependencies: None
+### Description: Implementar busca com paginação (page, pageSize)
+### Details:
+
+
+## 3.  [done]
+### Dependencies: None
+### Description: Implementar filtros dinâmicos por campos
+### Details:
+
+
+## 4.  [done]
+### Dependencies: None
+### Description: Implementar busca por ID único
+### Details:
+
+
+## 5.  [done]
+### Dependencies: None
+### Description: Implementar contagem de registros com filtros
+### Details:
+
+
+## 6.  [done]
+### Dependencies: None
+### Description: Implementar busca de texto em campos específicos
+### Details:
+
+
+## 7.  [done]
+### Dependencies: None
+### Description: Implementar ordenação personalizada
+### Details:
+
+
+## 8.  [done]
+### Dependencies: None
+### Description: Implementar tratamento de erros robusto
+### Details:
+
+
+## 9.  [done]
+### Dependencies: None
+### Description: Testar busca em todas as tabelas (usuarios, categorias, itens)
+### Details:
+
+
+## 10.  [done]
+### Dependencies: None
+### Description: Testar filtros por status, ordem, ativo
+### Details:
+
+
+## 11.  [done]
+### Dependencies: None
+### Description: Testar busca por ID em categorias
+### Details:
+
+
+## 12.  [done]
+### Dependencies: None
+### Description: Testar contagem de registros
+### Details:
+
+
+## 13.  [done]
+### Dependencies: None
+### Description: Testar busca de texto em campos apropriados
+### Details:
+
+

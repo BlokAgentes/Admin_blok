@@ -1,0 +1,31 @@
+{
+  "name": "blok-platform",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm --parallel --filter \"./apps/*\" run dev",
+    "dev:frontend": "npm --filter frontend run dev",
+    "dev:backend": "npm --filter backend run dev",
+    "build": "npm --recursive run build",
+    "build:frontend": "npm --filter frontend run build",
+    "build:backend": "npm --filter backend run build",
+    "lint": "npm --recursive run lint",
+    "start": "npm --parallel --filter \"./apps/*\" run start",
+    "clean": "npm --recursive run clean",
+    "test": "npm --recursive run test"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.56.0"
+  }
+}

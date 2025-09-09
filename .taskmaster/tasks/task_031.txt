@@ -1,0 +1,37 @@
+# Task ID: 31
+# Title: Implementar componente Alert com ícones personalizados
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: Implementar o componente Alert do shadcn/ui com os ícones lucide-react (AlertCircleIcon, CheckCircle2Icon, PopcornIcon) e criar demonstração funcional com diferentes variantes
+# Details:
+Criar componente AlertDemo com as seguintes funcionalidades:
+- Alert success com CheckCircle2Icon
+- Alert info com PopcornIcon  
+- Alert destructive com AlertCircleIcon
+- Suporte para AlertTitle e AlertDescription
+- Demonstração responsiva com grid layout
+- Integrar em páginas apropriadas do sistema para feedback ao usuário
+
+# Test Strategy:
+Verificar renderização correta dos três tipos de alerta, responsividade em diferentes tamanhos de tela, e integração com estados de sucesso/erro/informação
+
+# Subtasks:
+## 1. Criar componente AlertDemo com ícones lucide-react [pending]
+### Dependencies: None
+### Description: Desenvolver o componente AlertDemo conforme o exemplo fornecido, incluindo todos os três tipos de alerta (success, info, destructive) com os ícones especificados
+### Details:
+
+
+## 2. Integrar alerts em páginas de CRUD para feedback [pending]
+### Dependencies: None
+### Description: Adicionar componentes Alert nas páginas de criação, leitura, atualização e exclusão para fornecer feedback visual ao usuário sobre o status das operações
+### Details:
+
+
+## 3. Criar hook/useAlert para gerenciamento de estados de alerta [pending]
+### Dependencies: None
+### Description: Criar utilitário para gerenciar estados de alerta globalmente, permitindo que diferentes partes da aplicação exibam alerts dinamicamente
+### Details:
+Implementar hook customizado para gerenciar alerts de forma centralizada, incluindo funções para mostrar/ocultar alerts e configurar tipos/mensagens
+

@@ -1,0 +1,206 @@
+# Task ID: 27
+# Title: Implementar Logs de Auditoria
+# Status: in-progress
+# Dependencies: 23, 24, 25, 26
+# Priority: low
+# Description: Desenvolver sistema de logs para rastrear todas as operações realizadas no banco de dados.
+# Details:
+1. Criar tabela de auditoria no Supabase:
+```sql
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tabela TEXT NOT NULL,
+  operacao TEXT NOT NULL,
+  registro_id UUID NOT NULL,
+  dados_antigos JSONB,
+  dados_novos JSONB,
+  usuario_id UUID,
+  ip_address TEXT,
+  timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Criar índices para performance
+CREATE INDEX IF NOT EXISTS idx_audit_logs_tabela ON audit_logs(tabela);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_operacao ON audit_logs(operacao);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_registro_id ON audit_logs(registro_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_timestamp ON audit_logs(timestamp);
+```
+
+2. Implementar função para registrar logs de auditoria:
+```javascript
+import { supabase } from './supabaseClient'
+
+/**
+ * Registra uma operação no log de auditoria
+ * @param {Object} logData - Dados do log
+ * @param {string} logData.tabela - Nome da tabela afetada
+ * @param {string} logData.operacao - Tipo de operação (INSERT, UPDATE, DELETE)
+ * @param {string} logData.registro_id - ID do registro afetado
+ * @param {Object} [logData.dados_antigos] - Estado anterior do registro
+ * @param {Object} [logData.dados_novos] - Novo estado do registro
+ * @param {string} [logData.ip_address] - Endereço IP do cliente
+ * @returns {Promise<Object>} Resultado da operação
+ */
+export async function registrarAuditoria({
+  tabela,
+  operacao,
+  registro_id,
+  dados_antigos = null,
+  dados_novos = null,
+  ip_address = null
+}) {
+  try {
+    // Obter ID do usuário atual do contexto de autenticação
+    const { data: { user } } = await supabase.auth.getUser()
+    const usuario_id = user?.id
+
+    const { data, error } = await supabase
+      .from('audit_logs')
+      .insert({
+        tabela,
+        operacao,
+        registro_id,
+        dados_antigos,
+        dados_novos,
+        usuario_id,
+        ip_address
+      })
+
+    if (error) throw error
+    return { success: true, error: null }
+  } catch (error) {
+    console.error('Erro ao registrar log de auditoria:', error)
+    // Não propagar erro para não interromper operações principais
+    return { success: false, error: { message: 'Erro ao registrar auditoria' } }
+  }
+}
+
+/**
+ * Busca logs de auditoria com filtros
+ * @param {Object} options - Opções de busca
+ * @returns {Promise<Object>} Logs de auditoria
+ */
+export async function buscarLogsAuditoria({
+  tabela = null,
+  operacao = null,
+  registro_id = null,
+  usuario_id = null,
+  dataInicio = null,
+  dataFim = null,
+  page = 1,
+  pageSize = 20
+} = {}) {
+  try {
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    let query = supabase
+      .from('audit_logs')
+      .select('*', { count: 'exact' })
+
+    if (tabela) query = query.eq('tabela', tabela)
+    if (operacao) query = query.eq('operacao', operacao)
+    if (registro_id) query = query.eq('registro_id', registro_id)
+    if (usuario_id) query = query.eq('usuario_id', usuario_id)
+    if (dataInicio) query = query.gte('timestamp', dataInicio)
+    if (dataFim) query = query.lte('timestamp', dataFim)
+
+    const { data, error, count } = await query
+      .order('timestamp', { ascending: false })
+      .range(from, to)
+
+    if (error) throw error
+
+    return { 
+      data, 
+      error: null,
+      metadata: {
+        totalCount: count,
+        page,
+        pageSize,
+        totalPages: Math.ceil(count / pageSize)
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao buscar logs de auditoria:', error)
+    return { 
+      data: null, 
+      error: { message: 'Erro ao buscar logs de auditoria' },
+      metadata: null
+    }
+  }
+}
+```
+
+3. Integrar logs de auditoria com as operações CRUD
+4. Implementar mecanismo para limpar logs antigos (retenção de dados)
+5. Adicionar interface para visualização e filtragem de logs
+
+# Test Strategy:
+1. Testar o registro de logs para cada tipo de operação (CREATE, READ, UPDATE, DELETE)
+2. Verificar se os dados antigos e novos são registrados corretamente nas operações de atualização
+3. Testar a busca de logs com diferentes combinações de filtros
+4. Verificar a performance do sistema com grande volume de logs
+5. Testar a política de retenção de logs
+
+# Subtasks:
+## 1. Implementar classe AuditOperations [done]
+### Dependencies: None
+### Description: Desenvolver a classe AuditOperations para gerenciar todas as operações de auditoria no sistema.
+### Details:
+
+
+## 2. Implementar registro de logs para operações CREATE [done]
+### Dependencies: None
+### Description: Integrar o sistema de logs com as operações de criação de registros.
+### Details:
+
+
+## 3. Implementar registro de logs para operações UPDATE [done]
+### Dependencies: None
+### Description: Integrar o sistema de logs com as operações de atualização de registros, capturando dados antigos e novos.
+### Details:
+
+
+## 4. Implementar registro de logs para operações DELETE [done]
+### Dependencies: None
+### Description: Integrar o sistema de logs com as operações de exclusão de registros.
+### Details:
+
+
+## 5. Implementar busca de logs com filtros múltiplos [done]
+### Dependencies: None
+### Description: Desenvolver funcionalidade para buscar logs com diferentes combinações de filtros.
+### Details:
+
+
+## 6. Implementar contagem de logs por tipo de ação [done]
+### Dependencies: None
+### Description: Adicionar funcionalidade para contar logs por tipo de operação (CREATE, UPDATE, DELETE).
+### Details:
+
+
+## 7. Implementar busca de logs por registro específico [done]
+### Dependencies: None
+### Description: Desenvolver funcionalidade para buscar todos os logs relacionados a um registro específico.
+### Details:
+
+
+## 8. Implementar sistema de limpeza de logs antigos [done]
+### Dependencies: None
+### Description: Criar mecanismo para limpar logs antigos conforme política de retenção de dados.
+### Details:
+
+
+## 9. Integrar sistema de auditoria com Taskmaster MCP [pending]
+### Dependencies: None
+### Description: Integrar o sistema de logs de auditoria com o módulo principal do Taskmaster.
+### Details:
+
+
+## 10. Documentar sistema de auditoria [pending]
+### Dependencies: None
+### Description: Criar documentação completa do sistema de logs de auditoria, incluindo exemplos de uso e casos de teste.
+### Details:
+
+
